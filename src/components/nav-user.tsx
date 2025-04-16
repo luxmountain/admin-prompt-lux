@@ -27,6 +27,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
+import { useNavigate } from "react-router-dom"
+
 export function NavUser({
   user,
 }: {
@@ -37,7 +39,12 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -86,17 +93,17 @@ export function NavUser({
                 <IconUserCircle />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <IconCreditCard />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconNotification />
                 Notifications
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <IconLogout />
               Log out
             </DropdownMenuItem>
