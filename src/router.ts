@@ -8,26 +8,42 @@ import {
 
 const DashboardPage = React.lazy(() => import('@/app/admin/dashboard'));
 const LoginPage = React.lazy(() => import('@/app/auth/login'));
+const UserListPage = React.lazy(() => import('@/app/admin/userlist'));
+const ReportPage = React.lazy(() => import('@/app/admin/report'));
 
 const routes: IRoute[] = [
   {
     path: '/',
     element: DashboardPage,
-    protected: true, // Cần xác thực
+    protected: true,
     label: 'Dashboard',
     icon: IconCamera,
     children: [],
   },
-  
+  {
+    path: '/users',
+    element: UserListPage,
+    protected: true,
+    label: 'User List Account',
+    icon: IconCamera,
+    children: [],
+  },
+  {
+    path: '/reports',
+    element: ReportPage,
+    protected: true,
+    label: 'Report',
+    icon: IconCamera,
+    children: [],
+  },
   {
     path: '/login',
     element: LoginPage,
-    protected: false, // Không yêu cầu xác thực
+    protected: false,
     label: 'Đăng nhập',
     icon: IconChartBar,
     children: [],
   },
-
 ];
 
 export default routes;

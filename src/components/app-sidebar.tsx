@@ -8,16 +8,16 @@ import {
   IconFileDescription,
   IconFileWord,
   IconFolder,
-  IconHelp,
+  // IconHelp,
   IconInnerShadowTop,
   IconListDetails,
   IconReport,
-  IconSearch,
+  // IconSearch,
   IconSettings,
   IconUsers,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/nav-documents"
+// import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -40,17 +40,17 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
+      title: "User List",
+      url: "/users",
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
-      url: "#",
+      title: "Report",
+      url: "/reports",
       icon: IconChartBar,
     },
     {
@@ -118,16 +118,16 @@ const data = {
       url: "#",
       icon: IconSettings,
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
+    // {
+    //   title: "Get Help",
+    //   url: "#",
+    //   icon: IconHelp,
+    // },
+    // {
+    //   title: "Search",
+    //   url: "#",
+    //   icon: IconSearch,
+    // },
   ],
   documents: [
     {
@@ -158,7 +158,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <a href="/">
                 <IconInnerShadowTop className="!size-5" />
                 <span className="text-base font-semibold">Acme Inc.</span>
               </a>
@@ -168,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

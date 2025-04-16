@@ -1,31 +1,34 @@
-import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
+import { type Icon } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
-import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: Icon
-  }[]
+    title: string;
+    url: string;
+    icon?: Icon;
+  }[];
 }) {
+  const navigate = useNavigate(); // ✅ Bên trong function component
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarMenu>
+        {/* <SidebarMenu>
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               tooltip="Quick Create"
               className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+              onClick={() => navigate("/create")}
             >
               <IconCirclePlusFilled />
               <span>Quick Create</span>
@@ -34,16 +37,21 @@ export function NavMain({
               size="icon"
               className="size-8 group-data-[collapsible=icon]:opacity-0"
               variant="outline"
+              onClick={() => navigate("/inbox")}
             >
               <IconMail />
               <span className="sr-only">Inbox</span>
             </Button>
           </SidebarMenuItem>
-        </SidebarMenu>
+        </SidebarMenu> */}
+
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
+              <SidebarMenuButton
+                tooltip={item.title}
+                onClick={() => navigate(item.url)}
+              >
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
@@ -52,5 +60,5 @@ export function NavMain({
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  )
+  );
 }
