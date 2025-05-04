@@ -11,6 +11,8 @@ const LoginPage = React.lazy(() => import('@/app/auth/login'));
 const UserListPage = React.lazy(() => import('@/app/admin/userlist'));
 const ContentPage = React.lazy(() => import('@/app/admin/content'));
 const ReportPage = React.lazy(() => import('@/app/admin/report'));
+const ModelPage = React.lazy(() => import('@/app/admin/model'));
+const TagPage = React.lazy(() => import('@/app/admin/tag'));
 
 const routes: IRoute[] = [
   {
@@ -42,7 +44,7 @@ const routes: IRoute[] = [
   },
   {
     path: '/models',
-    element: ContentPage,
+    element: ModelPage,
     protected: true,
     label: 'Model Management',
     icon: IconCamera,
@@ -51,7 +53,7 @@ const routes: IRoute[] = [
   },
   {
     path: '/tags',
-    element: ContentPage,
+    element: TagPage,
     protected: true,
     label: 'Tag Management',
     icon: IconCamera,
