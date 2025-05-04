@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {
   IconCamera,
   IconChartBar,
@@ -8,19 +8,16 @@ import {
   IconFileDescription,
   IconFileWord,
   IconFolder,
-  // IconHelp,
   IconInnerShadowTop,
   IconListDetails,
   IconReport,
-  // IconSearch,
   IconSettings,
   IconUsers,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 
-// import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -29,14 +26,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+
+import { useAdminUser } from "@/hooks/useAdminUser";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -44,9 +38,14 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "User List",
+      title: "User Management",
       url: "/users",
       icon: IconListDetails,
+    },
+    {
+      title: "Content Management",
+      url: "/contents",
+      icon: IconFolder,
     },
     {
       title: "Report",
@@ -54,13 +53,8 @@ const data = {
       icon: IconChartBar,
     },
     {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
+      title: "Feedback",
+      url: "/feedbacks",
       icon: IconUsers,
     },
   ],
@@ -118,16 +112,6 @@ const data = {
       url: "#",
       icon: IconSettings,
     },
-    // {
-    //   title: "Get Help",
-    //   url: "#",
-    //   icon: IconHelp,
-    // },
-    // {
-    //   title: "Search",
-    //   url: "#",
-    //   icon: IconSearch,
-    // },
   ],
   documents: [
     {
@@ -146,9 +130,11 @@ const data = {
       icon: IconFileWord,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const user = useAdminUser();
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -168,12 +154,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {user && (
+          <NavUser
+            user={{
+              name: user.name,
+              email: user.email,
+              avatar: user.avatar_image || "/default-avatar.png",
+            }}
+          />
+        )}
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
