@@ -5,4 +5,5 @@ export interface AdminUser {
     postCount: number;
     followerCount: number;
     role: 0 | 1;
+    created_at: string;
 }

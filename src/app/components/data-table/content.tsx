@@ -10,12 +10,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { SimpleCalendar } from "@/components/ui/simple-calendar"; // Import the Calendar component
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"; // Import Popover
+import { DateRangeFilter } from "@/app/components/DataRangeFilter";
 
 interface PinTableProps {
   data: Pin[];
@@ -43,12 +38,6 @@ export function PinTable({ data, onView, onDelete }: PinTableProps) {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>(new Date());
-  const [calendarMonthFrom, setCalendarMonthFrom] = useState<Date>(
-    fromDate ?? toDate ?? new Date()
-  );
-  const [calendarMonthTo, setCalendarMonthTo] = useState<Date>(
-    toDate ?? fromDate ?? new Date()
-  );
 
   const sortableColumns: (keyof Pin)[] = [
     "pid",
@@ -56,6 +45,7 @@ export function PinTable({ data, onView, onDelete }: PinTableProps) {
     "comments",
     "seen",
     "savedPost",
+    "createdAt",
   ];
 
   const filteredData = useMemo(() => {
@@ -116,61 +106,24 @@ export function PinTable({ data, onView, onDelete }: PinTableProps) {
 
   return (
     <div className="mx-4 space-y-4">
-      <Input
-        placeholder="Search by ID, Title, Description..."
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setPage(1);
-        }}
-        className="max-w-sm"
-      />
+      <div className="flex justify-between items-center">
+        <Input
+          placeholder="Search by ID, Title, Description..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          className="max-w-sm"
+        />
 
-      {/* Date Range Filters */}
-      <div className="flex gap-4">
-        <h3 className="grid place-items-center">Filter: </h3>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="sm">
-              From Date:{" "}
-              {fromDate ? fromDate.toLocaleDateString("en-GB") : "Select"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <SimpleCalendar
-              value={fromDate}
-              onChange={(date) => {
-                setFromDate(date);
-                setCalendarMonthFrom(date); // Đồng bộ tháng cho From Date
-              }}
-              month={calendarMonthFrom}
-              setMonth={setCalendarMonthFrom}
-              disableDate={(date) => toDate !== undefined && date > toDate}
-            />
-          </PopoverContent>
-        </Popover>
-
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="sm">
-              To Date: {toDate ? toDate.toLocaleDateString("en-GB") : "Select"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <SimpleCalendar
-              value={toDate}
-              onChange={(date) => {
-                setToDate(date);
-                setCalendarMonthTo(date); // Đồng bộ tháng cho To Date
-              }}
-              month={calendarMonthTo}
-              setMonth={setCalendarMonthTo}
-              disableDate={(date) =>
-                date > new Date() || (fromDate !== undefined && date < fromDate)
-              }
-            />
-          </PopoverContent>
-        </Popover>
+        {/* Date Range Filters */}
+        <DateRangeFilter
+          fromDate={fromDate}
+          toDate={toDate}
+          onFromDateChange={setFromDate}
+          onToDateChange={setToDate}
+        />
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"; // import icons
+import { DateRangeFilter } from "@/app/components/DataRangeFilter";
 
 interface DataTableProps {
   data: AdminUser[];
@@ -25,6 +26,7 @@ const columns: { key: keyof AdminUser; label: string }[] = [
   { key: "email", label: "Email" },
   { key: "postCount", label: "Pins" },
   { key: "followerCount", label: "Followers" },
+  { key: "created_at", label: "Created At" },
 ];
 
 export function DataTable({
@@ -39,7 +41,9 @@ export function DataTable({
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
-
+  const [fromDate, setFromDate] = useState<Date | undefined>();
+  const [toDate, setToDate] = useState<Date | undefined>(new Date());
+  
   const filteredData = useMemo(() => {
     return data.filter((user) => {
       const searchLower = search.toLowerCase();
@@ -53,10 +57,17 @@ export function DataTable({
         (roleFilter === "user" && user.role === 0) ||
         (roleFilter === "admin" && user.role === 1);
   
-      return matchesSearch && matchesRole;
+      const userDate = new Date(user.created_at);
+      const startDate = fromDate ? new Date(fromDate.setHours(0, 0, 0, 0)) : undefined;
+      const endDate = toDate ? new Date(toDate.setHours(23, 59, 59, 999)) : undefined;
+      const matchesDate =
+        (!startDate || userDate >= startDate) &&
+        (!endDate || userDate <= endDate);
+  
+      return matchesSearch && matchesRole && matchesDate;
     });
-  }, [search, roleFilter, data]);
-
+  }, [search, roleFilter, data, fromDate, toDate]);
+  
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => {
       if (a[sortBy] < b[sortBy]) return sortAsc ? -1 : 1;
@@ -122,6 +133,12 @@ export function DataTable({
             </SelectContent>
           </Select>
         </div>
+        <DateRangeFilter
+        fromDate={fromDate}
+        toDate={toDate}
+        onFromDateChange={setFromDate}
+        onToDateChange={setToDate}
+      />
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">
@@ -157,9 +174,14 @@ export function DataTable({
               <tr key={user.uid} className="hover:bg-gray-50">
                 {columns.map((column) => (
                   <td key={column.key} className="px-4 py-2 border">
-                    {user[column.key]}
+                    {column.key === "created_at"
+                      ? new Date(user[column.key] as string).toLocaleDateString(
+                          "vi-VN"
+                        )
+                      : user[column.key]}
                   </td>
                 ))}
+
                 <td className="px-4 py-2 border">
                   <Select
                     defaultValue={convertRole(user.role)}

@@ -43,8 +43,8 @@ const data = {
       icon: IconListDetails,
     },
     {
-      title: "Content Management",
-      url: "/contents",
+      title: "Pin Management",
+      url: "/pins",
       icon: IconFolder,
     },
     {
