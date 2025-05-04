@@ -9,6 +9,7 @@ import {
 const DashboardPage = React.lazy(() => import('@/app/admin/dashboard'));
 const LoginPage = React.lazy(() => import('@/app/auth/login'));
 const UserListPage = React.lazy(() => import('@/app/admin/userlist'));
+const ContentPage = React.lazy(() => import('@/app/admin/content'));
 const ReportPage = React.lazy(() => import('@/app/admin/report'));
 
 const routes: IRoute[] = [
@@ -30,7 +31,7 @@ const routes: IRoute[] = [
   },
   {
     path: '/contents',
-    element: ReportPage,
+    element: ContentPage,
     protected: true,
     label: 'Content Management',
     icon: IconCamera,
