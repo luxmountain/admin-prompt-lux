@@ -3,7 +3,7 @@ import { Model } from "@/types/Model"; // Updated import
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"; // import icons
+import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
 
 interface DataTableProps {
   data: Model[];
@@ -25,7 +25,7 @@ export function DataTable({
   onDelete,
 }: DataTableProps) {
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<keyof Model>("mid"); // Default sort by Model ID
+  const [sortBy, setSortBy] = useState<keyof Model>("postCount"); // Default sort by Model ID
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);

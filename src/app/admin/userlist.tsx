@@ -42,10 +42,40 @@ export default function Content() {
   return (
     <DataTable
       data={users}
-      onRoleChange={(uid, newRole) => {
-        console.log("Role changed", uid, newRole);
-        // Update DB here
+      onRoleChange={async (uid, roleValue) => {
+        const roleMap = {
+          admin: 1,
+          user: 0,
+        };
+      
+        const newRole = roleMap[roleValue as keyof typeof roleMap] as 0 | 1;
+        
+        try {
+          const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/users/${uid}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ newRole }),
+          });
+      
+          if (!response.ok) {
+            throw new Error("Failed to update user role");
+          }
+      
+          setUsers((prevUsers) =>
+            prevUsers.map((user) =>
+              user.uid === uid ? { ...user, role: newRole } : user
+            )
+          );
+      
+          console.log(`User ${uid} role updated to ${newRole}`);
+        } catch (error) {
+          console.error("Error updating role:", error);
+          alert("Failed to update role");
+        }
       }}
+      
       onView={(uid) => {
         console.log("View user", uid);
       }}

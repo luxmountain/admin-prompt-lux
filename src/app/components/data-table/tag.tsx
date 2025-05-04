@@ -24,7 +24,7 @@ export function DataTable({
   onDelete,
 }: DataTableProps) {
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<keyof Tag>("tid"); // Default sort by Tag ID
+  const [sortBy, setSortBy] = useState<keyof Tag>("postCount"); // Default sort by Tag ID
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);

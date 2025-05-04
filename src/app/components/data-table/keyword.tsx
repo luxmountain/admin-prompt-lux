@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"; // import icons
+import { DateRangeFilter } from "../DataRangeFilter";
 
 interface DataTableProps {
   data: Keyword[];
@@ -31,17 +32,33 @@ export function DataTable({ data, onView, onDelete }: DataTableProps) {
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [fromDate, setFromDate] = useState<Date | undefined>();
+  const [toDate, setToDate] = useState<Date | undefined>(new Date());
 
   const filteredData = useMemo(() => {
     return data.filter((keyword) => {
       const searchLower = search.toLowerCase();
+
+      const pinDate = new Date(keyword.created_at);
+
+      const startDate = fromDate
+        ? new Date(fromDate.setHours(0, 0, 0, 0))
+        : undefined;
+      const endDate = toDate
+        ? new Date(toDate.setHours(23, 59, 59, 999))
+        : undefined;
+
       const matchesSearch =
         keyword.keyword.toLowerCase().includes(searchLower) ||
         keyword.id.toString().includes(search);
 
-      return matchesSearch;
+      const matchesDateRange =
+        (!startDate || pinDate >= startDate) &&
+        (!endDate || pinDate <= endDate);
+
+      return matchesSearch && matchesDateRange;
     });
-  }, [search, data]);
+  }, [search, data, fromDate, toDate]);
 
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => {
@@ -96,6 +113,13 @@ export function DataTable({ data, onView, onDelete }: DataTableProps) {
           }}
           className="max-w-sm"
         />
+
+        <DateRangeFilter
+          fromDate={fromDate}
+          toDate={toDate}
+          onFromDateChange={setFromDate}
+          onToDateChange={setToDate}
+        />
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">
@@ -130,7 +154,7 @@ export function DataTable({ data, onView, onDelete }: DataTableProps) {
               <tr key={keyword.id} className="hover:bg-gray-50">
                 {columns.map((column) => (
                   <td key={column.key} className="px-4 py-2 border">
-                    {column.key === "created_at" || column.key === "updated_at"
+                    {column.key === "created_at"
                       ? formatDate(keyword[column.key] as string) // Format date columns
                       : keyword[column.key]}
                   </td>
@@ -187,7 +211,10 @@ export function DataTable({ data, onView, onDelete }: DataTableProps) {
           <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
             Previous
           </Button>
-          <Button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
+          <Button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
             Next
           </Button>
         </div>
