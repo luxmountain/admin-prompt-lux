@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
-import { AdminUser } from "@/types/AdminUser";
+import { Pin } from "@/types/Pin";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
 import {
   Select,
   SelectTrigger,
@@ -8,54 +10,78 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"; // import icons
+import { SimpleCalendar } from "@/components/ui/simple-calendar"; // Import the Calendar component
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"; // Import Popover
 
-interface DataTableProps {
-  data: AdminUser[];
-  onRoleChange?: (uid: number, newRole: "user" | "admin") => void;
-  onView?: (uid: number) => void;
-  onDelete?: (uid: number) => void;
+interface PinTableProps {
+  data: Pin[];
+  onView?: (pid: number) => void;
+  onDelete?: (pid: number) => void;
 }
 
-// Ensure columns have the correct types
-const columns: { key: keyof AdminUser; label: string }[] = [
-  { key: "uid", label: "UID" },
-  { key: "username", label: "Username" },
-  { key: "email", label: "Email" },
-  { key: "postCount", label: "Pins" },
-  { key: "followerCount", label: "Followers" },
+const columns: { key: keyof Pin; label: string }[] = [
+  { key: "pid", label: "ID" },
+  { key: "title", label: "Title" },
+  { key: "description", label: "Description" },
+  { key: "imageUrl", label: "Image" },
+  { key: "likes", label: "Likes" },
+  { key: "comments", label: "Comments" },
+  { key: "seen", label: "Views" },
+  { key: "savedPost", label: "Saved" },
+  { key: "createdAt", label: "Created At" },
 ];
 
-export function DataTable({
-  data,
-  onRoleChange,
-  onView,
-  onDelete,
-}: DataTableProps) {
+export function PinTable({ data, onView, onDelete }: PinTableProps) {
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<keyof AdminUser>("uid"); // Default sort by UID
-  const [sortAsc, setSortAsc] = useState(true);
+  const [sortBy, setSortBy] = useState<keyof Pin>("pid");
+  const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
+  const [fromDate, setFromDate] = useState<Date | undefined>();
+  const [toDate, setToDate] = useState<Date | undefined>(new Date());
+  const [calendarMonthFrom, setCalendarMonthFrom] = useState<Date>(
+    fromDate ?? toDate ?? new Date()
+  );
+  const [calendarMonthTo, setCalendarMonthTo] = useState<Date>(
+    toDate ?? fromDate ?? new Date()
+  );
+
+  const sortableColumns: (keyof Pin)[] = [
+    "pid",
+    "likes",
+    "comments",
+    "seen",
+    "savedPost",
+  ];
 
   const filteredData = useMemo(() => {
-    return data.filter((user) => {
-      const searchLower = search.toLowerCase();
+    return data.filter((pin) => {
+      const searchTerm = search.toLowerCase();
+      const pinDate = new Date(pin.createdAt);
+
+      const startDate = fromDate
+        ? new Date(fromDate.setHours(0, 0, 0, 0))
+        : undefined;
+      const endDate = toDate
+        ? new Date(toDate.setHours(23, 59, 59, 999))
+        : undefined;
+
       const matchesSearch =
-        user.username?.toLowerCase().includes(searchLower) ||
-        user.email?.toLowerCase().includes(searchLower) ||
-        user.uid.toString().includes(search);
-  
-      const matchesRole =
-        roleFilter === "all" ||
-        (roleFilter === "user" && user.role === 0) ||
-        (roleFilter === "admin" && user.role === 1);
-  
-      return matchesSearch && matchesRole;
+        pin.title.toLowerCase().includes(searchTerm) ||
+        pin.pid.toString().includes(searchTerm) ||
+        pin.description.toLowerCase().includes(searchTerm);
+
+      const matchesDateRange =
+        (!startDate || pinDate >= startDate) &&
+        (!endDate || pinDate <= endDate);
+
+      return matchesSearch && matchesDateRange;
     });
-  }, [search, roleFilter, data]);
+  }, [search, data, fromDate, toDate]);
 
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => {
@@ -72,12 +98,12 @@ export function DataTable({
 
   const totalPages = Math.ceil(sortedData.length / rowsPerPage);
 
-  const handleSort = (field: keyof AdminUser) => {
+  const handleSort = (field: keyof Pin) => {
     if (field === sortBy) {
-      setSortAsc(!sortAsc); // toggle sorting direction if the same column is clicked
+      setSortAsc(!sortAsc);
     } else {
       setSortBy(field);
-      setSortAsc(true); // default to ascending when switching columns
+      setSortAsc(true);
     }
   };
 
@@ -88,107 +114,141 @@ export function DataTable({
     }
   }, [filteredData.length, rowsPerPage, page]);
 
-  // Convert role number to string ("user" or "admin")
-  const convertRole = (role: 0 | 1) => (role === 0 ? "user" : "admin");
-
   return (
     <div className="mx-4 space-y-4">
-      <div className="flex flex-wrap items-center justify-between">
-        <Input
-          placeholder="Search by ID, Username, Email..."
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          className="max-w-sm"
-        />
-        <div className="flex items-center gap-2">
-          <span>Role:</span>
-          <Select
-            value={roleFilter}
-            onValueChange={(value) => {
-              setRoleFilter(value as "all" | "admin" | "user");
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-[120px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="user">User</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <Input
+        placeholder="Search by ID, Title, Description..."
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setPage(1);
+        }}
+        className="max-w-sm"
+      />
+
+      {/* Date Range Filters */}
+      <div className="flex gap-4">
+        <h3 className="grid place-items-center">Filter: </h3>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              From Date:{" "}
+              {fromDate ? fromDate.toLocaleDateString("en-GB") : "Select"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <SimpleCalendar
+              value={fromDate}
+              onChange={(date) => {
+                setFromDate(date);
+                setCalendarMonthFrom(date); // Đồng bộ tháng cho From Date
+              }}
+              month={calendarMonthFrom}
+              setMonth={setCalendarMonthFrom}
+              disableDate={(date) => toDate !== undefined && date > toDate}
+            />
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm">
+              To Date: {toDate ? toDate.toLocaleDateString("en-GB") : "Select"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <SimpleCalendar
+              value={toDate}
+              onChange={(date) => {
+                setToDate(date);
+                setCalendarMonthTo(date); // Đồng bộ tháng cho To Date
+              }}
+              month={calendarMonthTo}
+              setMonth={setCalendarMonthTo}
+              disableDate={(date) =>
+                date > new Date() || (fromDate !== undefined && date < fromDate)
+              }
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">
         <table className="w-full table-auto">
           <thead className="bg-gray-100 text-left">
             <tr>
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  className="px-4 py-2 border cursor-pointer"
-                  onClick={() => handleSort(column.key)}
-                >
-                  <div className="flex">
-                    {column.label}
-                    {sortBy === column.key && (
-                      <span className="ml-2 grid place-items-center">
-                        {sortAsc ? (
-                          <ArrowUpIcon className="h-4 w-4" />
-                        ) : (
-                          <ArrowDownIcon className="h-4 w-4" />
-                        )}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              ))}
-              <th className="px-4 py-2 border">Role</th>
+              {columns.map((column) => {
+                const isSortable = sortableColumns.includes(column.key);
+                return (
+                  <th
+                    key={column.key}
+                    className={`px-4 py-2 border ${
+                      isSortable ? "cursor-pointer" : ""
+                    }`}
+                    onClick={() => isSortable && handleSort(column.key)}
+                  >
+                    <div className="flex items-center">
+                      {column.label}
+                      {isSortable && sortBy === column.key && (
+                        <span className="ml-2 grid place-items-center">
+                          {sortAsc ? (
+                            <ArrowUpIcon className="h-4 w-4" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4" />
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                );
+              })}
               <th className="px-4 py-2 border">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((user) => (
-              <tr key={user.uid} className="hover:bg-gray-50">
+            {paginatedData.map((pin) => (
+              <tr key={pin.pid} className="hover:bg-gray-50">
                 {columns.map((column) => (
                   <td key={column.key} className="px-4 py-2 border">
-                    {user[column.key]}
+                    {column.key === "createdAt" ? (
+                      <div className="line-clamp-6 break-words">
+                        {(() => {
+                          const date = new Date(pin.createdAt);
+                          const day = String(date.getDate()).padStart(2, "0");
+                          const month = String(date.getMonth() + 1).padStart(
+                            2,
+                            "0"
+                          );
+                          const year = date.getFullYear();
+                          return `${day}/${month}/${year}`;
+                        })()}
+                      </div>
+                    ) : column.key === "imageUrl" ? (
+                      <img
+                        src={pin.imageUrl}
+                        alt="pin"
+                        className="w-16 h-16 object-cover rounded-md"
+                      />
+                    ) : (
+                      <div className="line-clamp-6 break-words">
+                        {String(pin[column.key])}
+                      </div>
+                    )}
                   </td>
                 ))}
-                <td className="px-4 py-2 border">
-                  <Select
-                    defaultValue={convertRole(user.role)}
-                    onValueChange={(value) =>
-                      onRoleChange?.(user.uid, value as "user" | "admin")
-                    }
-                  >
-                    <SelectTrigger className="w-[100px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </td>
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => onView?.(user.uid)}
+                      onClick={() => onView?.(pin.pid)}
                     >
                       View
                     </Button>
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDelete?.(user.uid)}
+                      onClick={() => onDelete?.(pin.pid)}
                     >
                       Delete
                     </Button>
@@ -200,15 +260,15 @@ export function DataTable({
         </table>
       </div>
 
-      {/* Pagination + Rows per page controls */}
+      {/* Pagination Controls */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <span>Rows per page:</span>
           <Select
-            defaultValue={rowsPerPage.toString()}
+            value={rowsPerPage.toString()}
             onValueChange={(value) => {
               setRowsPerPage(Number(value));
-              setPage(1); // reset to first page when page size changes
+              setPage(1);
             }}
           >
             <SelectTrigger className="w-[80px]">
@@ -221,6 +281,7 @@ export function DataTable({
             </SelectContent>
           </Select>
         </div>
+
         <div className="flex items-center gap-4">
           <span>
             Page {page} of {totalPages}

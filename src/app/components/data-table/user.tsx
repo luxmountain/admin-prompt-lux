@@ -35,7 +35,7 @@ export function DataTable({
 }: DataTableProps) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<keyof AdminUser>("uid"); // Default sort by UID
-  const [sortAsc, setSortAsc] = useState(true);
+  const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
