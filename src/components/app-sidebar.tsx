@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Icon,
   IconCamera,
   IconChartBar,
   IconDashboard,
@@ -27,8 +28,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
+import routes from "@/router";
 import { useAdminUser } from "@/hooks/useAdminUser";
+import { IRoute } from "@/types/IRoute";
+import { useMemo } from "react";
 
 const data = {
   navMain: [
@@ -134,7 +137,17 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useAdminUser();
-
+  const navMain = useMemo(() => {
+    return routes
+      .filter((route) => route.protected && route.label && route.icon)
+      .sort((a, b) => (a.sidebarOrder ?? 999) - (b.sidebarOrder ?? 999))
+      .map((route) => ({
+        title: route.label!,
+        url: route.path,
+        icon: route.icon!,
+      }));
+  }, []);
+  
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -153,7 +166,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

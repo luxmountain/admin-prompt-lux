@@ -4,5 +4,6 @@ export interface IRoute {
     protected: boolean;
     label?: string;
     icon?: React.ComponentType; // Thay IconType bằng React.ElementType để hỗ trợ các icon component
-    children?: IRoute[]; // Nested routes (optional)
+    children?: IRoute[]; 
+    sidebarOrder?: number;
   }

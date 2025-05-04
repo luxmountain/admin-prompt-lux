@@ -20,6 +20,7 @@ const routes: IRoute[] = [
     label: 'Dashboard',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 1,
   },
   {
     path: '/users',
@@ -28,6 +29,7 @@ const routes: IRoute[] = [
     label: 'User Management',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 2,
   },
   {
     path: '/pins',
@@ -36,6 +38,7 @@ const routes: IRoute[] = [
     label: 'Pin Management',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 3,
   },
   {
     path: '/models',
@@ -44,6 +47,7 @@ const routes: IRoute[] = [
     label: 'Model Management',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 4,
   },
   {
     path: '/tags',
@@ -52,6 +56,7 @@ const routes: IRoute[] = [
     label: 'Tag Management',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 5,
   },
   {
     path: '/keywords',
@@ -60,6 +65,7 @@ const routes: IRoute[] = [
     label: 'Keyword Mangement',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 6,
   },
   {
     path: '/reports',
@@ -68,6 +74,7 @@ const routes: IRoute[] = [
     label: 'Report',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 7,
   },
   {
     path: '/feedbacks',
@@ -76,6 +83,7 @@ const routes: IRoute[] = [
     label: 'Feedback',
     icon: IconCamera,
     children: [],
+    sidebarOrder: 8,
   },
   {
     path: '/login',
