@@ -42,11 +42,17 @@ export function DataTable({
 
   const filteredData = useMemo(() => {
     return data.filter((user) => {
-      const matchesSearch = user.username
-        ?.toLowerCase()
-        .includes(search.toLowerCase());
+      const searchLower = search.toLowerCase();
+      const matchesSearch =
+        user.username?.toLowerCase().includes(searchLower) ||
+        user.email?.toLowerCase().includes(searchLower) ||
+        user.uid.toString().includes(search);
+  
       const matchesRole =
-        roleFilter === "all" || (roleFilter === "user" && user.role === 0) || (roleFilter === "admin" && user.role === 1);
+        roleFilter === "all" ||
+        (roleFilter === "user" && user.role === 0) ||
+        (roleFilter === "admin" && user.role === 1);
+  
       return matchesSearch && matchesRole;
     });
   }, [search, roleFilter, data]);
@@ -89,7 +95,7 @@ export function DataTable({
     <div className="mx-4 space-y-4">
       <div className="flex flex-wrap items-center justify-between">
         <Input
-          placeholder="Search by username..."
+          placeholder="Search by ID, Username, Email..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
