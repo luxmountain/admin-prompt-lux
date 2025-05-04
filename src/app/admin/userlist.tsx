@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { DataTable } from "@/app/components/data-table/content";
+import { DataTable } from "@/app/components/data-table/user";
 import { AdminUser } from "@/types/AdminUser";
 
 export default function Content() {
