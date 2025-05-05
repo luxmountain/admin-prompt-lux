@@ -8,7 +8,7 @@ import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
 interface DataTableProps {
   data: Model[];
   onView?: (mid: number) => void;
-  onDelete?: (mid: number) => void;
+  onEdit?: (mid: number) => void;
 }
 
 // Ensure columns have the correct types
@@ -22,7 +22,7 @@ const columns: { key: keyof Model; label: string }[] = [
 export function DataTable({
   data,
   onView,
-  onDelete,
+  onEdit,
 }: DataTableProps) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<keyof Model>("postCount"); // Default sort by Model ID
@@ -136,9 +136,9 @@ export function DataTable({
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDelete?.(model.mid)}
+                      onClick={() => onEdit?.(model.mid)}
                     >
-                      Delete
+                      Edit
                     </Button>
                   </div>
                 </td>

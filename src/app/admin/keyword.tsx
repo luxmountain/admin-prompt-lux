@@ -11,7 +11,9 @@ export default function Content() {
     // Fetch data from the API
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/auth/admin/getDataTable/keyword"); // Adjusted to the keywords API endpoint
+        const response = await fetch(
+          "http://localhost:3000/api/auth/admin/getDataTable/keyword"
+        ); // Adjusted to the keywords API endpoint
 
         if (!response.ok) {
           throw new Error("Failed to fetch keywords");
@@ -20,7 +22,7 @@ export default function Content() {
         const data = await response.json();
         setKeywords(data); // assuming the response contains an array of keywords
         setLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setError("Failed to load keywords");
         setLoading(false);
@@ -30,7 +32,29 @@ export default function Content() {
     fetchData();
   }, []);
 
-  // If loading or an error occurred, show loading/error message
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/auth/admin/getDataTable/keyword/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete keyword");
+      }
+
+      setKeywords((prevKeywords) =>
+        prevKeywords.filter((keyword) => keyword.id !== id)
+      );
+      alert("Keyword deleted successfully!");
+    } catch (error) {
+      setError("Failed to delete keyword");
+      alert("Error: Failed to delete keyword.");
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -45,9 +69,7 @@ export default function Content() {
       onView={(id) => {
         console.log("View keyword", id);
       }}
-      onDelete={(id) => {
-        console.log("Delete keyword", id);
-      }}
+      onDelete={handleDelete}
     />
   );
 }

@@ -8,7 +8,7 @@ export default function Content() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch data from the API
+    // Fetch data from the API for models
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/auth/admin/getDataTable/models");
@@ -18,9 +18,8 @@ export default function Content() {
         }
 
         const data = await response.json();
-        setModels(data); // assuming the response contains an array of models
+        setModels(data); // Assuming the response contains an array of models
         setLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setError("Failed to load models");
         setLoading(false);
@@ -29,6 +28,28 @@ export default function Content() {
 
     fetchData();
   }, []);
+
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/models/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete model");
+      }
+
+      // Update state to remove the deleted model
+      setModels((prevModels) => prevModels.filter((model) => model.mid !== id));
+
+      // Show success alert
+      alert("Model deleted successfully!");
+    } catch (error) {
+      setError("Failed to delete model");
+      // Show error alert
+      alert("Error: Failed to delete model.");
+    }
+  };
 
   // If loading or an error occurred, show loading/error message
   if (loading) {
@@ -41,13 +62,11 @@ export default function Content() {
 
   return (
     <DataTable
-      data={models}
-      onView={(mid) => {
-        console.log("View model", mid);
+      data={models} // Pass models data
+      onView={(id) => {
+        console.log("View model", id);
       }}
-      onDelete={(mid) => {
-        console.log("Delete model", mid);
-      }}
+      onEdit={handleDelete} // Pass the handleDelete function to the DataTable
     />
   );
 }

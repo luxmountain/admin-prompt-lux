@@ -20,7 +20,6 @@ export default function Content() {
         const data = await response.json();
         setTags(data); // Assuming the response contains an array of tags
         setLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setError("Failed to load tags");
         setLoading(false);
@@ -29,6 +28,26 @@ export default function Content() {
 
     fetchData();
   }, []);
+
+  const handleDelete = async (id: number) => {
+    try {
+      console.log("Deleting tag with ID:", id); // Debugging line
+      const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/tags/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete tag");
+      }
+
+      setTags((prevTags) => prevTags.filter((tag) => tag.tid !== id));
+      alert("Tag deleted successfully!");
+    } catch (error) {
+      setError("Failed to delete tag");
+      // Show error alert
+      alert("Error: Failed to delete tag.");
+    }
+  };
 
   // If loading or an error occurred, show loading/error message
   if (loading) {
@@ -42,12 +61,10 @@ export default function Content() {
   return (
     <DataTable
       data={tags} // Pass tags data
-      onView={(tid) => {
-        console.log("View tag", tid);
+      onView={(id) => {
+        console.log("View tag", id);
       }}
-      onDelete={(tid) => {
-        console.log("Delete tag", tid);
-      }}
+      onDelete={handleDelete} // Pass the handleDelete function to the DataTable
     />
   );
 }
