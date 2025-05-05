@@ -16,6 +16,7 @@ interface DataTableProps {
   data: Keyword[];
   onView?: (id: number) => void;
   onDelete?: (id: number) => void;
+  onEdit?: (id: number) => void;
 }
 
 // Ensure columns have the correct types
@@ -26,7 +27,7 @@ const columns: { key: keyof Keyword; label: string }[] = [
   { key: "created_at", label: "Created At" }, // Added Created At column
 ];
 
-export function DataTable({ data, onView, onDelete }: DataTableProps) {
+export function DataTable({ data, onView, onDelete, onEdit }: DataTableProps) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<keyof Keyword>("post_count"); // Default sort by Keyword ID
   const [sortAsc, setSortAsc] = useState(false);
@@ -172,6 +173,13 @@ export function DataTable({ data, onView, onDelete }: DataTableProps) {
                       variant="destructive"
                       size="sm"
                       onClick={() => onDelete?.(keyword.id)}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => onEdit?.(keyword.id)}
                     >
                       Delete
                     </Button>

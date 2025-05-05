@@ -69,6 +69,9 @@ export default function Content() {
       onView={(id) => {
         console.log("View keyword", id);
       }}
+      onEdit={(id) => {
+        console.log("View keyword", id);
+      }}
       onDelete={handleDelete}
     />
   );

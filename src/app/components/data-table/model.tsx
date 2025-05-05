@@ -134,7 +134,7 @@ export function DataTable({
                       View
                     </Button>
                     <Button
-                      variant="destructive"
+                      variant="default"
                       size="sm"
                       onClick={() => onEdit?.(model.mid)}
                     >
