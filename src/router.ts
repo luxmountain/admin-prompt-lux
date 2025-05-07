@@ -2,9 +2,15 @@ import React from 'react';
 import { IRoute } from './types/IRoute';
 
 import {
-    IconCamera,
-    IconChartBar,
-} from "@tabler/icons-react"
+  IconLayoutDashboard,
+  IconUsers,
+  IconPinned,
+  IconRobot,
+  IconTags,
+  IconKey,
+  IconFlag,
+  IconLogin,
+} from "@tabler/icons-react";
 
 const DashboardPage = React.lazy(() => import('@/app/admin/dashboard'));
 const LoginPage = React.lazy(() => import('@/app/auth/login'));
@@ -14,6 +20,7 @@ const ReportPage = React.lazy(() => import('@/app/admin/report'));
 const ModelPage = React.lazy(() => import('@/app/admin/model'));
 const TagPage = React.lazy(() => import('@/app/admin/tag'));
 const KeywordPage = React.lazy(() => import('@/app/admin/keyword'));
+const AccountPage = React.lazy(() => import('@/app/admin/account'));
 
 const routes: IRoute[] = [
   {
@@ -21,7 +28,7 @@ const routes: IRoute[] = [
     element: DashboardPage,
     protected: true,
     label: 'Dashboard',
-    icon: IconCamera,
+    icon: IconLayoutDashboard,
     children: [],
     sidebarOrder: 1,
   },
@@ -30,7 +37,7 @@ const routes: IRoute[] = [
     element: UserListPage,
     protected: true,
     label: 'User Management',
-    icon: IconCamera,
+    icon: IconUsers,
     children: [],
     sidebarOrder: 2,
   },
@@ -39,7 +46,7 @@ const routes: IRoute[] = [
     element: ContentPage,
     protected: true,
     label: 'Pin Management',
-    icon: IconCamera,
+    icon: IconPinned,
     children: [],
     sidebarOrder: 3,
   },
@@ -48,7 +55,7 @@ const routes: IRoute[] = [
     element: ModelPage,
     protected: true,
     label: 'Model Management',
-    icon: IconCamera,
+    icon: IconRobot,
     children: [],
     sidebarOrder: 4,
   },
@@ -57,7 +64,7 @@ const routes: IRoute[] = [
     element: TagPage,
     protected: true,
     label: 'Tag Management',
-    icon: IconCamera,
+    icon: IconTags,
     children: [],
     sidebarOrder: 5,
   },
@@ -65,8 +72,8 @@ const routes: IRoute[] = [
     path: '/keywords',
     element: KeywordPage,
     protected: true,
-    label: 'Keyword Mangement',
-    icon: IconCamera,
+    label: 'Keyword Management',
+    icon: IconKey,
     children: [],
     sidebarOrder: 6,
   },
@@ -75,25 +82,24 @@ const routes: IRoute[] = [
     element: ReportPage,
     protected: true,
     label: 'Report',
-    icon: IconCamera,
+    icon: IconFlag,
     children: [],
     sidebarOrder: 7,
   },
-  // {
-  //   path: '/feedbacks',
-  //   element: ReportPage,
-  //   protected: true,
-  //   label: 'Feedback',
-  //   icon: IconCamera,
-  //   children: [],
-  //   sidebarOrder: 8,
-  // },
+  {
+    path: '/account',
+    element: AccountPage,
+    protected: true,
+    label: 'My Account',
+    icon: IconFlag,
+    children: [],
+  },
   {
     path: '/login',
     element: LoginPage,
     protected: false,
     label: 'Login',
-    icon: IconChartBar,
+    icon: IconLogin,
     children: [],
   },
 ];

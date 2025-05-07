@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  Icon,
   IconCamera,
   IconChartBar,
   IconDashboard,
@@ -12,7 +11,6 @@ import {
   IconInnerShadowTop,
   IconListDetails,
   IconReport,
-  IconSettings,
   IconUsers,
 } from "@tabler/icons-react";
 
@@ -30,7 +28,6 @@ import {
 } from "@/components/ui/sidebar";
 import routes from "@/router";
 import { useAdminUser } from "@/hooks/useAdminUser";
-import { IRoute } from "@/types/IRoute";
 import { useMemo } from "react";
 
 const data = {
@@ -109,13 +106,7 @@ const data = {
       ],
     },
   ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-  ],
+  navSecondary: [],
   documents: [
     {
       name: "Data Library",
@@ -137,9 +128,16 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useAdminUser();
+  console.log("user", user);
   const navMain = useMemo(() => {
     return routes
-      .filter((route) => route.protected && route.label && route.icon)
+      .filter(
+        (route) =>
+          route.protected &&
+          route.label &&
+          route.icon &&
+          typeof route.sidebarOrder === "number"
+      )
       .sort((a, b) => (a.sidebarOrder ?? 999) - (b.sidebarOrder ?? 999))
       .map((route) => ({
         title: route.label!,
@@ -147,7 +145,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: route.icon!,
       }));
   }, []);
-  
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -159,7 +157,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="/">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Prompt Lux.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
