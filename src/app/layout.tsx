@@ -18,8 +18,7 @@ export default function Layout({ children }: LayoutProps) {
   .find((route) => pathname.startsWith(route.path));
 
   const title = currentRoute?.label || "Documents";
-  console.log("Current route:", currentRoute); // ✅
-  console.log("Title:", title); // ✅
+
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" />
