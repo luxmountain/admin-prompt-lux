@@ -170,16 +170,16 @@ export function DataTable({ data, onView, onDelete, onEdit }: DataTableProps) {
                       View
                     </Button>
                     <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => onDelete?.(keyword.id)}
-                    >
-                      Delete
-                    </Button>
-                    <Button
                       variant="default"
                       size="sm"
                       onClick={() => onEdit?.(keyword.id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => onDelete?.(keyword.id)}
                     >
                       Delete
                     </Button>

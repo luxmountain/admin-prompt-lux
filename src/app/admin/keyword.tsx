@@ -1,28 +1,29 @@
 import { useState, useEffect } from "react";
-import { DataTable } from "@/app/components/data-table/keyword"; // Adjusted import path to new Keyword DataTable
-import { Keyword } from "@/types/Keyword"; // Import the new Keyword type
+import { DataTable } from "@/app/components/data-table/keyword";
+import { Keyword } from "@/types/Keyword";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import your Alert components
 
 export default function Content() {
-  const [keywords, setKeywords] = useState<Keyword[]>([]); // Changed state to keywords
+  const [keywords, setKeywords] = useState<Keyword[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"default" | "destructive">("default");
 
   useEffect(() => {
-    // Fetch data from the API
     const fetchData = async () => {
       try {
         const response = await fetch(
           "http://localhost:3000/api/auth/admin/getDataTable/keyword"
-        ); // Adjusted to the keywords API endpoint
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch keywords");
         }
 
         const data = await response.json();
-        setKeywords(data); // assuming the response contains an array of keywords
+        setKeywords(data);
         setLoading(false);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setError("Failed to load keywords");
         setLoading(false);
@@ -45,34 +46,47 @@ export default function Content() {
         throw new Error("Failed to delete keyword");
       }
 
-      setKeywords((prevKeywords) =>
-        prevKeywords.filter((keyword) => keyword.id !== id)
-      );
-      alert("Keyword deleted successfully!");
+      setKeywords((prev) => prev.filter((keyword) => keyword.id !== id));
+      setAlertType("default");
+      setAlertMessage("Keyword deleted successfully!");
     } catch (error) {
-      setError("Failed to delete keyword");
-      alert("Error: Failed to delete keyword.");
+      setAlertType("destructive");
+      setAlertMessage("Failed to delete keyword.");
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // Optional: Auto-clear alert after a few seconds
+  useEffect(() => {
+    if (alertMessage) {
+      const timer = setTimeout(() => setAlertMessage(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertMessage]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <DataTable
-      data={keywords}
-      onView={(id) => {
-        console.log("View keyword", id);
-      }}
-      onEdit={(id) => {
-        console.log("View keyword", id);
-      }}
-      onDelete={handleDelete}
-    />
+    <div className="space-y-4">
+      {alertMessage && (
+        <Alert variant={alertType}>
+          <AlertTitle>
+            {alertType === "destructive" ? "Error" : "Success"}
+          </AlertTitle>
+          <AlertDescription>{alertMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      <DataTable
+        data={keywords}
+        onView={(id) => {
+          console.log("View keyword", id);
+        }}
+        onEdit={(id) => {
+          console.log("Edit keyword", id);
+        }}
+        onDelete={handleDelete}
+      />
+    </div>
   );
 }
