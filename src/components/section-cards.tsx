@@ -28,6 +28,18 @@ export function SectionCards() {
     active_rate_percent: string;
   } | null>(null);
 
+  const [interactiveRate, setInteractiveRate] = useState<{
+    ratioLast30: string;
+    percentageChange: string;
+  } | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/auth/admin/dashboard/rateInteractive")
+      .then((res) => res.json())
+      .then((data) => setInteractiveRate(data))
+      .catch((err) => console.error("Error fetching interaction rate:", err));
+  }, []);
+
   useEffect(() => {
     fetch("http://localhost:3000/api/auth/admin/dashboard/newPin")
       .then((res) => res.json())
@@ -142,8 +154,12 @@ export function SectionCards() {
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             {isActiveUp
-              ? `Active accounts increased by ${Math.abs(activeGrowth).toFixed(2)}%`
-              : `Active accounts dropped by ${Math.abs(activeGrowth).toFixed(2)}%`}
+              ? `Active accounts increased by ${Math.abs(activeGrowth).toFixed(
+                  2
+                )}%`
+              : `Active accounts dropped by ${Math.abs(activeGrowth).toFixed(
+                  2
+                )}%`}
             {isActiveUp ? (
               <IconTrendingUp className="size-4 text-green-500" />
             ) : (
@@ -160,25 +176,50 @@ export function SectionCards() {
 
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
+          <CardDescription>Engagement Rate</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
+            {interactiveRate ? `${interactiveRate.ratioLast30}%` : "Loading..."}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <IconTrendingUp />
-              +4.5%
+              {interactiveRate &&
+              parseFloat(interactiveRate.percentageChange) >= 0 ? (
+                <IconTrendingUp />
+              ) : (
+                <IconTrendingDown />
+              )}
+              {interactiveRate
+                ? `${Math.abs(
+                    parseFloat(interactiveRate.percentageChange)
+                  ).toFixed(2)}%`
+                : ""}
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase <IconTrendingUp className="size-4" />
+            {interactiveRate &&
+            parseFloat(interactiveRate.percentageChange) >= 0
+              ? `Engagement rate increased by ${parseFloat(
+                  interactiveRate.percentageChange
+                ).toFixed(2)}%`
+              : `Engagement rate dropped by ${Math.abs(
+                  parseFloat(interactiveRate?.percentageChange || "0")
+                ).toFixed(2)}%`}
+            {interactiveRate &&
+            parseFloat(interactiveRate.percentageChange) >= 0 ? (
+              <IconTrendingUp className="size-4 text-green-500" />
+            ) : (
+              <IconTrendingDown className="size-4 text-red-500" />
+            )}
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
+          <div className="text-muted-foreground">
+            {interactiveRate
+              ? "Compared to the previous 30-day period."
+              : "Fetching data..."}
+          </div>
         </CardFooter>
       </Card>
     </div>
   );
 }
-  
