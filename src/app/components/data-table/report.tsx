@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Report } from "@/types/Report";
 import { Button } from "@/components/ui/button";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
@@ -9,8 +9,8 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select"; // Import Select
-import { DateRangeFilter } from "../DataRangeFilter"; // Ensure correct path to DateRangeFilter
+} from "@/components/ui/select";
+import { DateRangeFilter } from "../DataRangeFilter";
 
 interface ReportTableProps {
   data: Report[];
@@ -29,16 +29,18 @@ const columns: { key: keyof Report | string; label: string }[] = [
 ];
 
 export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
-  const [search, setSearch] = useState("");
+  // 🔄 Thay search bằng 2 input riêng
+  const [reporterSearch, setReporterSearch] = useState("");
+  const [reportedSearch, setReportedSearch] = useState("");
+
   const [sortBy, setSortBy] = useState<string>("id");
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [reportTypeFilter, setReportTypeFilter] = useState<
     "all" | "report_user" | "report_post"
-  >("all"); // Thêm filter
+  >("all");
 
-  // Date Range filter state
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>(new Date());
 
@@ -47,16 +49,19 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
   };
 
   const filteredData = useMemo(() => {
-    const searchLower = search.toLowerCase();
+    const reporterSearchLower = reporterSearch.toLowerCase();
+    const reportedSearchLower = reportedSearch.toLowerCase();
+
     return data.filter((report) => {
-      const matchesSearch =
-        report.reason.toLowerCase().includes(searchLower) ||
+      const matchesReporter =
         report.User_Report_reporter_idToUser.email
           .toLowerCase()
-          .includes(searchLower) ||
+          .includes(reporterSearchLower);
+
+      const matchesReported =
         report.User_Report_reported_user_idToUser.email
           .toLowerCase()
-          .includes(searchLower);
+          .includes(reportedSearchLower);
 
       const matchesType =
         reportTypeFilter === "all" ||
@@ -76,9 +81,16 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
         (!startDate || reportDate >= startDate) &&
         (!endDate || reportDate <= endDate);
 
-      return matchesSearch && matchesType && matchesDate;
+      return matchesReporter && matchesReported && matchesType && matchesDate;
     });
-  }, [search, data, reportTypeFilter, fromDate, toDate]);
+  }, [
+    reporterSearch,
+    reportedSearch,
+    data,
+    reportTypeFilter,
+    fromDate,
+    toDate,
+  ]);
 
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => {
@@ -109,18 +121,27 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
 
   return (
     <div className="mx-4 space-y-4">
-      <div className="flex justify-between items-center">
-        {/* Tìm kiếm */}
-        <Input
-          placeholder="Search reports..."
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          className="max-w-sm"
-        />
-        {/* Date Range Filter */}
+      <div className="flex flex-col md:flex-row md:justify-between gap-4">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center">
+          <Input
+            placeholder="Search reporter email..."
+            value={reporterSearch}
+            onChange={(e) => {
+              setReporterSearch(e.target.value);
+              setPage(1);
+            }}
+            className="max-w-sm"
+          />
+          <Input
+            placeholder="Search reported email..."
+            value={reportedSearch}
+            onChange={(e) => {
+              setReportedSearch(e.target.value);
+              setPage(1);
+            }}
+            className="max-w-sm"
+          />
+        </div>
         <DateRangeFilter
           fromDate={fromDate}
           toDate={toDate}
@@ -128,7 +149,7 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
           onToDateChange={setToDate}
         />
       </div>
-      {/* Select Box lọc loại báo cáo */}
+
       <div className="flex items-center gap-2">
         <span>Report Type:</span>
         <Select
@@ -228,7 +249,6 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
         </table>
       </div>
 
-      {/* Pagination + Rows per page controls */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <span>Rows per page:</span>
@@ -236,7 +256,7 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
             defaultValue={rowsPerPage.toString()}
             onValueChange={(value) => {
               setRowsPerPage(Number(value));
-              setPage(1); // reset to first page when page size changes
+              setPage(1);
             }}
           >
             <SelectTrigger className="w-[80px]">
