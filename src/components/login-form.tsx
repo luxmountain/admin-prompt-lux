@@ -9,28 +9,49 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import Alert components
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // Error state to hold the error message
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Reset error on new submit attempt
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/admin/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/admin/login",
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         window.location.href = "/";
       }
     } catch (error: any) {
-      setError("Invalid email or password");
+      if (error.response) {
+        // If we have a response from the server, handle it
+        if (error.response.status === 401) {
+          setError("Incorrect email or password."); // Set specific error message for 401
+        } else {
+          // Handle other types of errors, e.g., network errors or unexpected status codes
+          setError(
+            error.response?.data?.message || "An unexpected error occurred."
+          );
+        }
+      } else {
+        // In case of no response (e.g., network issues)
+        setError("Failed to connect to the server. Please try again later.");
+      }
     }
   };
 
@@ -59,7 +80,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <div className="grid gap-3">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
+                    <a
+                      href="#"
+                      className="ml-auto text-sm underline-offset-4 hover:underline"
+                    >
                       Forgot your password?
                     </a>
                   </div>
@@ -71,24 +95,21 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     required
                   />
                 </div>
+                {/* Show the alert if there's an error */}
+                {error && (
+                  <Alert variant="destructive" className="mt-2">
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
               </div>
-              {/* <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
-                  Sign up
-                </a>
-              </div> */}
             </div>
           </form>
         </CardContent>
       </Card>
-      {/* <div className="text-muted-foreground text-center text-xs">
-        By clicking continue, you agree to our{" "}
-        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-      </div> */}
     </div>
   );
 }
