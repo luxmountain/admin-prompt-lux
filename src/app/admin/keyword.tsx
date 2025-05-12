@@ -58,7 +58,7 @@ export default function Content() {
   // Optional: Auto-clear alert after a few seconds
   useEffect(() => {
     if (alertMessage) {
-      const timer = setTimeout(() => setAlertMessage(null), 4000);
+      const timer = setTimeout(() => setAlertMessage(null), 5000);
       return () => clearTimeout(timer);
     }
   }, [alertMessage]);
@@ -69,7 +69,10 @@ export default function Content() {
   return (
     <div className="space-y-4">
       {alertMessage && (
-        <Alert variant={alertType}>
+        <Alert
+          variant={alertType}
+          className="fixed bottom-4 right-8 z-50 w-80"
+        >
           <AlertTitle>
             {alertType === "destructive" ? "Error" : "Success"}
           </AlertTitle>
@@ -84,6 +87,41 @@ export default function Content() {
         }}
         onEdit={(id) => {
           console.log("Edit keyword", id);
+        }}
+        onSave={async (keyword: string) => {
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/auth/admin/actions/add/keyword",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ keyword }),
+              }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              // Kiểm tra nếu lỗi do keyword đã tồn tại
+              if (data.message === "Keyword already exists") {
+                setAlertType("destructive");
+                setAlertMessage("Keyword already exists!");
+              } else {
+                throw new Error(data.message || "Failed to add keyword");
+              }
+              return;
+            }
+
+            setKeywords((prev) => [...prev, data.data]);
+            setAlertType("default");
+            setAlertMessage("Keyword added successfully!");
+          } catch (error) {
+            console.error("Error saving keyword:", error);
+            setAlertType("destructive");
+            setAlertMessage("Failed to add keyword.");
+          }
         }}
         onDelete={handleDelete}
       />

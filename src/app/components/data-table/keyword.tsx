@@ -11,12 +11,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"; // import icons
 import { DateRangeFilter } from "../DataRangeFilter";
+import { useNavigate } from "react-router-dom";
+import { PlusIcon } from "@heroicons/react/24/solid";
 
 interface DataTableProps {
   data: Keyword[];
   onView?: (id: number) => void;
   onDelete?: (id: number) => void;
   onEdit?: (id: number) => void;
+  onSave?: (keyword: string) => void;
 }
 
 // Ensure columns have the correct types
@@ -27,14 +30,17 @@ const columns: { key: keyof Keyword; label: string }[] = [
   { key: "created_at", label: "Created At" }, // Added Created At column
 ];
 
-export function DataTable({ data, onView, onDelete, onEdit }: DataTableProps) {
+export function DataTable({ data, onView, onDelete, onEdit, onSave }: DataTableProps) {
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<keyof Keyword>("post_count"); // Default sort by Keyword ID
+  const [sortBy, setSortBy] = useState<keyof Keyword>("post_count");
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>(new Date());
+  const navigate = useNavigate();
+  const [adding, setAdding] = useState(false);
+  const [newKeyword, setNewKeyword] = useState("");
 
   const filteredData = useMemo(() => {
     return data.filter((keyword) => {
@@ -121,6 +127,48 @@ export function DataTable({ data, onView, onDelete, onEdit }: DataTableProps) {
           onFromDateChange={setFromDate}
           onToDateChange={setToDate}
         />
+        {!adding ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setAdding(true)}
+            className="flex items-center gap-1"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Add Keyword
+          </Button>
+        ) : (
+          <div className="flex gap-2 items-center">
+            <Input
+              placeholder="New keyword"
+              value={newKeyword}
+              onChange={(e) => setNewKeyword(e.target.value)}
+              className="w-[200px]"
+            />
+            <Button
+              size="sm"
+              onClick={() => {
+                if (newKeyword.trim()) {
+                  onSave?.(newKeyword.trim());
+                  setNewKeyword("");
+                  setAdding(false);
+                }
+              }}
+            >
+              Save
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setNewKeyword("");
+                setAdding(false);
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">
@@ -162,20 +210,7 @@ export function DataTable({ data, onView, onDelete, onEdit }: DataTableProps) {
                 ))}
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onView?.(keyword.id)}
-                    >
-                      View
-                    </Button>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => onEdit?.(keyword.id)}
-                    >
-                      Edit
-                    </Button>
+
                     <Button
                       variant="destructive"
                       size="sm"
