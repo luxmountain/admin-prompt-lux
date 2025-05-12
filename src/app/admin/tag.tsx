@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/data-table/tag";  // Adjusted path for tags table
 import { Tag } from "@/types/Tag"; // Create or update the `Tag` type for tags
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import Alert components
 
 export default function Content() {
-  const [tags, setTags] = useState<Tag[]>([]); // Changed to tags
+  const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"default" | "destructive">("default");
 
   useEffect(() => {
     // Fetch data from the API for tags
@@ -27,11 +30,36 @@ export default function Content() {
     };
 
     fetchData();
+
+    // Check if there's an alert message in sessionStorage
+    const storedMessage = sessionStorage.getItem("tagAlertMessage");
+    const storedType = sessionStorage.getItem("tagAlertType");
+
+    if (storedMessage) {
+      setAlertMessage(storedMessage);
+      setAlertType(storedType as "default" | "destructive");
+
+      // Remove from sessionStorage after displaying
+      sessionStorage.removeItem("tagAlertMessage");
+      sessionStorage.removeItem("tagAlertType");
+    }
   }, []);
+
+  useEffect(() => {
+    // If there's an alert message, set a timer to remove it after 5 seconds
+    let timer: NodeJS.Timeout;
+    if (alertMessage) {
+      timer = setTimeout(() => {
+        setAlertMessage(null);
+      }, 5000); // 5000ms = 5 seconds
+
+      // Clean up the timer when alertMessage changes or component unmounts
+      return () => clearTimeout(timer);
+    }
+  }, [alertMessage]); // This effect depends on the alertMessage
 
   const handleDelete = async (id: number) => {
     try {
-      console.log("Deleting tag with ID:", id); // Debugging line
       const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/tags/${id}`, {
         method: "DELETE",
       });
@@ -59,12 +87,22 @@ export default function Content() {
   }
 
   return (
-    <DataTable
-      data={tags} // Pass tags data
-      onView={(id) => {
-        console.log("View tag", id);
-      }}
-      onDelete={handleDelete} // Pass the handleDelete function to the DataTable
-    />
+    <div className="space-y-4">
+      {/* Show alert message if exists */}
+      {alertMessage && (
+        <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
+          <AlertTitle>{alertType === "destructive" ? "Error" : "Success"}</AlertTitle>
+          <AlertDescription>{alertMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      <DataTable
+        data={tags} // Pass tags data
+        onView={(id) => {
+          console.log("View tag", id);
+        }}
+        onDelete={handleDelete}
+      />
+    </div>
   );
 }

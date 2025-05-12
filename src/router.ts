@@ -21,6 +21,7 @@ const ModelPage = React.lazy(() => import('@/app/admin/model'));
 const TagPage = React.lazy(() => import('@/app/admin/tag'));
 const KeywordPage = React.lazy(() => import('@/app/admin/keyword'));
 const AccountPage = React.lazy(() => import('@/app/admin/account'));
+const AddTagPage = React.lazy(() => import('@/app/admin/add/tag'));
 const UserViewPage = React.lazy(() => import('@/app/view/user'));
 const PinViewPage = React.lazy(() => import('@/app/view/pin'));
 
@@ -93,6 +94,14 @@ const routes: IRoute[] = [
     element: AccountPage,
     protected: true,
     label: 'My Account',
+    icon: IconFlag,
+    children: [],
+  },
+  {
+    path: '/tags/create',
+    element: AddTagPage,
+    protected: true,
+    label: 'Create Tag',
     icon: IconFlag,
     children: [],
   },

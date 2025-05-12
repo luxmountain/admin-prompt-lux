@@ -1,9 +1,20 @@
 import { useState, useMemo, useEffect } from "react";
 import { Tag } from "@/types/Tag"; // Updated import for tags
 import { Button } from "@/components/ui/button";
-import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowUpIcon,
+  ArrowDownIcon,
+  PlusIcon,
+} from "@heroicons/react/24/solid";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
 
 interface DataTableProps {
   data: Tag[]; // Use Tag type
@@ -18,17 +29,13 @@ const columns: { key: keyof Tag; label: string }[] = [
   { key: "postCount", label: "Post Count" },
 ];
 
-export function DataTable({
-  data,
-  onView,
-  onDelete,
-}: DataTableProps) {
+export function DataTable({ data, onView, onDelete }: DataTableProps) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<keyof Tag>("postCount"); // Default sort by Tag ID
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const navigate = useNavigate();
   const filteredData = useMemo(() => {
     return data.filter((tag) => {
       const searchLower = search.toLowerCase();
@@ -84,6 +91,15 @@ export function DataTable({
           }}
           className="max-w-sm"
         />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate("/tags/create")}
+          className="flex items-center gap-1"
+        >
+          <PlusIcon className="h-4 w-4" />
+          Add Tag
+        </Button>
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">
@@ -118,20 +134,18 @@ export function DataTable({
               <tr key={tag.tid} className="hover:bg-gray-50">
                 {columns.map((column) => (
                   <td key={column.key} className="px-4 py-2 border">
-                    {column.key === "tag_description"
-                      ? tag[column.key].slice(0, 50) + "..." // truncate description
-                      : tag[column.key]}
+                    {tag[column.key]}
                   </td>
                 ))}
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2">
-                    <Button
+                    {/* <Button
                       variant="outline"
                       size="sm"
                       onClick={() => onView?.(tag.tid)}
                     >
                       View
-                    </Button>
+                    </Button> */}
                     <Button
                       variant="destructive"
                       size="sm"
@@ -175,7 +189,10 @@ export function DataTable({
           <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
             Previous
           </Button>
-          <Button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
+          <Button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
             Next
           </Button>
         </div>

@@ -11,7 +11,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"; // import icons
 import { DateRangeFilter } from "../DataRangeFilter";
-import { useNavigate } from "react-router-dom";
 import { PlusIcon } from "@heroicons/react/24/solid";
 
 interface DataTableProps {
@@ -38,7 +37,6 @@ export function DataTable({ data, onView, onDelete, onEdit, onSave }: DataTableP
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>(new Date());
-  const navigate = useNavigate();
   const [adding, setAdding] = useState(false);
   const [newKeyword, setNewKeyword] = useState("");
 
