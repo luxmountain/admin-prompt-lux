@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/data-table/user";
 import { AdminUser } from "@/types/AdminUser";
+import { useNavigate } from 'react-router-dom';
 
 export default function Content() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     // Fetch data from the API
     const fetchData = async () => {
@@ -77,7 +79,7 @@ export default function Content() {
       }}
       
       onView={(uid) => {
-        console.log("View user", uid);
+        navigate(`/users/${uid}`);
       }}
       onDelete={(uid) => {
         console.log("Delete user", uid);

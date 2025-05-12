@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { PinTable } from "@/app/components/data-table/content";
 import { Pin } from "@/types/Pin";
+import { useNavigate } from 'react-router-dom';
 
 export default function Content() {
   const [pins, setPins] = useState<Pin[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPins = async () => {
@@ -30,7 +32,9 @@ export default function Content() {
   return (
     <PinTable
       data={pins}
-      onView={(pid) => console.log("View pin", pid)}
+      onView={(pid) => {
+        navigate(`/pins/${pid}`);
+      }}
       onDelete={(pid) => console.log("Delete pin", pid)}
     />
   );
