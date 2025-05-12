@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/data-table/model";
 import { Model } from "@/types/Model";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Alert components
+import { useNavigate } from "react-router-dom";
 
 export default function Content() {
   const [models, setModels] = useState<Model[]>([]);
@@ -9,6 +10,7 @@ export default function Content() {
   const [error, setError] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"default" | "destructive">("default");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,24 +56,6 @@ export default function Content() {
     }
   }, [alertMessage]);
 
-  const handleDelete = async (id: number) => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/models/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete model");
-      }
-
-      setModels((prevModels) => prevModels.filter((model) => model.mid !== id));
-      alert("Model deleted successfully!");
-    } catch (error) {
-      setError("Failed to delete model");
-      alert("Error: Failed to delete model.");
-    }
-  };
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -89,7 +73,9 @@ export default function Content() {
         onView={(id) => {
           console.log("View model", id);
         }}
-        onEdit={handleDelete} // Consider renaming this to onDelete for clarity
+        onEdit={(id) => {
+          navigate(`/models/edit/${id}`);
+        }}
       />
     </div>
   );
