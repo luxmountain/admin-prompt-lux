@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 
 interface DataTableProps {
   data: Tag[]; // Use Tag type
-  onView?: (tid: number) => void;
+  onEdit?: (tid: number) => void;
   onDelete?: (tid: number) => void;
 }
 
@@ -29,7 +29,7 @@ const columns: { key: keyof Tag; label: string }[] = [
   { key: "postCount", label: "Post Count" },
 ];
 
-export function DataTable({ data, onView, onDelete }: DataTableProps) {
+export function DataTable({ data, onEdit, onDelete }: DataTableProps) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<keyof Tag>("postCount"); // Default sort by Tag ID
   const [sortAsc, setSortAsc] = useState(false);
@@ -139,6 +139,13 @@ export function DataTable({ data, onView, onDelete }: DataTableProps) {
                 ))}
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => onEdit?.(tag.tid)}
+                    >
+                      Edit
+                    </Button>
                     <Button
                       variant="destructive"
                       size="sm"

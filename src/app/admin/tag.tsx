@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/data-table/tag";  // Adjusted path for tags table
 import { Tag } from "@/types/Tag"; // Create or update the `Tag` type for tags
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import Alert components
+import { useNavigate } from "react-router-dom";
 
 export default function Content() {
   const [tags, setTags] = useState<Tag[]>([]);
@@ -9,7 +10,8 @@ export default function Content() {
   const [error, setError] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"default" | "destructive">("default");
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     // Fetch data from the API for tags
     const fetchData = async () => {
@@ -98,8 +100,8 @@ export default function Content() {
 
       <DataTable
         data={tags} // Pass tags data
-        onView={(id) => {
-          console.log("View tag", id);
+        onEdit={(id) => {
+          navigate(`/tags/edit/${id}`);
         }}
         onDelete={handleDelete}
       />
