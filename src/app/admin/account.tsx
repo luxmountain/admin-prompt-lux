@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // Ensure Avatar is imported
 import { useAdminUser } from "@/hooks/useAdminUser";
 
 export default function AccountPage() {
@@ -22,11 +23,16 @@ export default function AccountPage() {
         <CardContent className="grid gap-6">
           <div className="grid gap-2">
             <Label>Avatar</Label>
-            <img
-              src={user.avatar_image ?? "/placeholder.jpg"}
-              alt="Avatar"
-              className="h-24 w-24 rounded-lg border object-cover"
-            />
+            <Avatar className="h-24 w-24">
+              <AvatarImage
+                src={user.avatar_image ?? "/default-avatar.png"}
+                alt="Avatar"
+              />
+              <AvatarFallback>
+                {user.first_name?.[0]}
+                {user.last_name?.[0]}
+              </AvatarFallback>
+            </Avatar>
           </div>
           <div className="grid gap-2">
             <Label>Email</Label>
@@ -34,7 +40,7 @@ export default function AccountPage() {
           </div>
           <div className="grid gap-2">
             <Label>Username</Label>
-            <Input value={user.username} readOnly />
+            <Input value={user.name} readOnly />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="grid gap-2">

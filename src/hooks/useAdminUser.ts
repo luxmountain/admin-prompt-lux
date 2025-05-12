@@ -7,7 +7,6 @@ export function useAdminUser() {
     bio: string;
     last_name: string;
     first_name: string;
-    username: string | number | readonly string[] | undefined;
     name: string;
     email: string;
     avatar_image?: string;
