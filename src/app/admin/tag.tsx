@@ -65,17 +65,18 @@ export default function Content() {
       const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/tags/${id}`, {
         method: "DELETE",
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to delete tag");
       }
-
+  
       setTags((prevTags) => prevTags.filter((tag) => tag.tid !== id));
-      alert("Tag deleted successfully!");
+  
+      setAlertMessage("Tag deleted successfully!");
+      setAlertType("default");
     } catch (error) {
-      setError("Failed to delete tag");
-      // Show error alert
-      alert("Error: Failed to delete tag.");
+      setAlertMessage("Failed to delete tag.");
+      setAlertType("destructive");
     }
   };
 
