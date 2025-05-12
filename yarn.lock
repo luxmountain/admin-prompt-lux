@@ -2084,6 +2084,11 @@ color-string@^1.9.0:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
+color-thief-browser@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/color-thief-browser/-/color-thief-browser-2.0.2.tgz#6fbe6af73717e706802cf01ed16647b2683ff0c2"
+  integrity sha512-dXHq3ytLWEN7Nbu+oZAbtBP/TRd3uNT1Ll38idklwgr8Cng3XGI7bzMz6xWYID+zPd7AupdHpyNYVacQ8uhK0w==
+
 color@^4.0.1:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/color/-/color-4.2.3.tgz#d781ecb5e57224ee43ea9627560107c0e0c6463a"

@@ -44,7 +44,16 @@ const routes: IRoute[] = [
     protected: true,
     label: 'User Management',
     icon: IconUsers,
-    children: [],
+    children: [
+      {
+        path: ':id',
+        element: UserViewPage,
+        protected: true,
+        label: 'View User',
+        icon: IconUsers,
+        children: [],
+      },
+    ],
     sidebarOrder: 2,
   },
   {
@@ -53,7 +62,16 @@ const routes: IRoute[] = [
     protected: true,
     label: 'Pin Management',
     icon: IconPinned,
-    children: [],
+    children: [
+      {
+        path: ':id',
+        element: PinViewPage,
+        protected: true,
+        label: 'View Pin',
+        icon: IconUsers,
+        children: [],
+      },
+    ],
     sidebarOrder: 3,
   },
   {
@@ -132,22 +150,6 @@ const routes: IRoute[] = [
     protected: true,
     label: 'My Account',
     icon: IconFlag,
-    children: [],
-  },
-  {
-    path: '/users/:id',
-    element: UserViewPage,
-    protected: true,
-    label: 'View User',
-    icon: IconUsers,
-    children: [],
-  },
-  {
-    path: '/pins/:id',
-    element: PinViewPage,
-    protected: true,
-    label: 'View Pin',
-    icon: IconUsers,
     children: [],
   },
   {
