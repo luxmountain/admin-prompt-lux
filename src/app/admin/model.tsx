@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { DataTable } from "@/app/components/data-table/model";  // Adjusted import path
-import { Model } from "@/types/Model"; // Updated type import
+import { DataTable } from "@/app/components/data-table/model";
+import { Model } from "@/types/Model";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Alert components
 
 export default function Content() {
-  const [models, setModels] = useState<Model[]>([]); // Changed state to models
+  const [models, setModels] = useState<Model[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"default" | "destructive">("default");
 
   useEffect(() => {
-    // Fetch data from the API for models
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/auth/admin/getDataTable/models");
@@ -18,7 +20,7 @@ export default function Content() {
         }
 
         const data = await response.json();
-        setModels(data); // Assuming the response contains an array of models
+        setModels(data);
         setLoading(false);
       } catch (error) {
         setError("Failed to load models");
@@ -27,7 +29,30 @@ export default function Content() {
     };
 
     fetchData();
+
+    // Retrieve alert message from sessionStorage if exists
+    const storedMessage = sessionStorage.getItem("modelAlertMessage");
+    const storedType = sessionStorage.getItem("modelAlertType");
+
+    if (storedMessage) {
+      setAlertMessage(storedMessage);
+      setAlertType(storedType as "default" | "destructive");
+
+      // Clear it so it doesn't persist across future loads
+      sessionStorage.removeItem("modelAlertMessage");
+      sessionStorage.removeItem("modelAlertType");
+    }
   }, []);
+
+  useEffect(() => {
+    if (alertMessage) {
+      const timer = setTimeout(() => {
+        setAlertMessage(null);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [alertMessage]);
 
   const handleDelete = async (id: number) => {
     try {
@@ -39,34 +64,33 @@ export default function Content() {
         throw new Error("Failed to delete model");
       }
 
-      // Update state to remove the deleted model
       setModels((prevModels) => prevModels.filter((model) => model.mid !== id));
-
-      // Show success alert
       alert("Model deleted successfully!");
     } catch (error) {
       setError("Failed to delete model");
-      // Show error alert
       alert("Error: Failed to delete model.");
     }
   };
 
-  // If loading or an error occurred, show loading/error message
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <DataTable
-      data={models} // Pass models data
-      onView={(id) => {
-        console.log("View model", id);
-      }}
-      onEdit={handleDelete} // Pass the handleDelete function to the DataTable
-    />
+    <div className="space-y-4">
+      {alertMessage && (
+        <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
+          <AlertTitle>{alertType === "destructive" ? "Error" : "Success"}</AlertTitle>
+          <AlertDescription>{alertMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      <DataTable
+        data={models}
+        onView={(id) => {
+          console.log("View model", id);
+        }}
+        onEdit={handleDelete} // Consider renaming this to onDelete for clarity
+      />
+    </div>
   );
 }

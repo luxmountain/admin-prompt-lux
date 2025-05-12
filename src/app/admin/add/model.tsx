@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import Alert components
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-export default function CreateTagPage() {
-  const [tagContent, setTagContent] = useState("");
-  const [tagDescription, setTagDescription] = useState("");
+export default function CreateModelPage() {
+  const [modelName, setModelName] = useState("");
+  const [modelDescription, setModelDescription] = useState("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"default" | "destructive">("default");
   const navigate = useNavigate();
@@ -20,27 +20,27 @@ export default function CreateTagPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/admin/actions/add/tag", {
+      const response = await fetch("http://localhost:3000/api/auth/admin/actions/add/model", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          tag_content: tagContent,
-          tag_description: tagDescription,
+          model_name: modelName,
+          model_description: modelDescription,
         }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.message || "Failed to create tag");
+        throw new Error(data.message || "Failed to create model");
       }
 
-      sessionStorage.setItem("tagAlertMessage", "Tag created successfully!");
-      sessionStorage.setItem("tagAlertType", "default");
-      navigate("/tags");
+      sessionStorage.setItem("modelAlertMessage", "Model created successfully!");
+      sessionStorage.setItem("modelAlertType", "default");
+      navigate("/models");
     } catch (error) {
-      setAlertMessage(error.message || "Failed to create tag.");
+      setAlertMessage((error as Error).message || "Failed to create model.");
       setAlertType("destructive");
       console.error(error);
     }
@@ -70,30 +70,30 @@ export default function CreateTagPage() {
 
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Create Tag</CardTitle>
+          <CardTitle>Create Model</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <form onSubmit={handleSubmit}>
-            {/* Tag Content */}
+            {/* Model Name */}
             <div className="grid gap-4 mb-8">
-              <Label className="text-lg">Tag Content</Label>
+              <Label className="text-lg">Model Name</Label>
               <Input
                 type="text"
-                value={tagContent}
-                onChange={(e) => setTagContent(e.target.value)}
-                placeholder="Enter tag content"
+                value={modelName}
+                onChange={(e) => setModelName(e.target.value)}
+                placeholder="Enter model name"
                 required
                 className="w-full h-12"
               />
             </div>
 
-            {/* Tag Description */}
+            {/* Model Description */}
             <div className="grid gap-4">
-              <Label className="text-lg">Tag Description</Label>
+              <Label className="text-lg">Model Description</Label>
               <Textarea
-                value={tagDescription}
-                onChange={(e) => setTagDescription(e.target.value)}
-                placeholder="Enter a description for the tag"
+                value={modelDescription}
+                onChange={(e) => setModelDescription(e.target.value)}
+                placeholder="Enter a description for the model"
                 required
                 className="w-full h-48"
               />

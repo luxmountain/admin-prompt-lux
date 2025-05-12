@@ -1,9 +1,16 @@
 import { useState, useMemo, useEffect } from "react";
 import { Model } from "@/types/Model"; // Updated import
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
+import { ArrowUpIcon, ArrowDownIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
 
 interface DataTableProps {
   data: Model[];
@@ -19,17 +26,13 @@ const columns: { key: keyof Model; label: string }[] = [
   { key: "postCount", label: "Post Count" },
 ];
 
-export function DataTable({
-  data,
-  onView,
-  onEdit,
-}: DataTableProps) {
+export function DataTable({ data, onView, onEdit }: DataTableProps) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<keyof Model>("postCount"); // Default sort by Model ID
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const navigate = useNavigate();
   const filteredData = useMemo(() => {
     return data.filter((model) => {
       const searchLower = search.toLowerCase();
@@ -85,6 +88,15 @@ export function DataTable({
           }}
           className="max-w-sm"
         />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate("/models/create")}
+          className="flex items-center gap-1"
+        >
+          <PlusIcon className="h-4 w-4" />
+          Add Tag
+        </Button>
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">
@@ -119,20 +131,11 @@ export function DataTable({
               <tr key={model.mid} className="hover:bg-gray-50">
                 {columns.map((column) => (
                   <td key={column.key} className="px-4 py-2 border">
-                    {column.key === "model_description"
-                      ? model[column.key].slice(0, 50) + "..." // truncate description
-                      : model[column.key]}
+                    {model[column.key]}
                   </td>
                 ))}
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onView?.(model.mid)}
-                    >
-                      View
-                    </Button>
                     <Button
                       variant="default"
                       size="sm"
@@ -163,9 +166,9 @@ export function DataTable({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="5">5</SelectItem>
               <SelectItem value="10">10</SelectItem>
               <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -176,7 +179,10 @@ export function DataTable({
           <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
             Previous
           </Button>
-          <Button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
+          <Button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
             Next
           </Button>
         </div>

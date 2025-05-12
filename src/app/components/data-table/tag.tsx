@@ -139,13 +139,6 @@ export function DataTable({ data, onView, onDelete }: DataTableProps) {
                 ))}
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2">
-                    {/* <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onView?.(tag.tid)}
-                    >
-                      View
-                    </Button> */}
                     <Button
                       variant="destructive"
                       size="sm"

@@ -2,27 +2,27 @@ import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/data-table/user";
 import { AdminUser } from "@/types/AdminUser";
 import { useNavigate } from 'react-router-dom';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export default function Content() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"default" | "destructive">("default");
+
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    // Fetch data from the API
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/auth/admin/getDataTable/users");
-        
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
-
         const data = await response.json();
-        setUsers(data); // assuming the response contains an array of AdminUser
+        setUsers(data);
         setLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setError("Failed to load users");
         setLoading(false);
@@ -32,58 +32,64 @@ export default function Content() {
     fetchData();
   }, []);
 
-  // If loading or an error occurred, show loading/error message
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    if (alertMessage) {
+      const timer = setTimeout(() => {
+        setAlertMessage(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertMessage]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <DataTable
-      data={users}
-      onRoleChange={async (uid, roleValue) => {
-        const roleMap = {
-          admin: 1,
-          user: 0,
-        };
-      
-        const newRole = roleMap[roleValue as keyof typeof roleMap] as 0 | 1;
-        
-        try {
-          const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/users/${uid}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ newRole }),
-          });
-      
-          if (!response.ok) {
-            throw new Error("Failed to update user role");
+    <div className="space-y-4">
+      {/* Alert Message */}
+      {alertMessage && (
+        <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
+          <AlertTitle>{alertType === "destructive" ? "Error" : "Success"}</AlertTitle>
+          <AlertDescription>{alertMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      <DataTable
+        data={users}
+        onRoleChange={async (uid, roleValue) => {
+          const roleMap = { admin: 1, user: 0 };
+          const newRole = roleMap[roleValue as keyof typeof roleMap] as 0 | 1;
+
+          try {
+            const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/users/${uid}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ newRole }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to update user role");
+            }
+
+            setUsers((prevUsers) =>
+              prevUsers.map((user) =>
+                user.uid === uid ? { ...user, role: newRole } : user
+              )
+            );
+
+            setAlertMessage("User role updated successfully");
+            setAlertType("default");
+          } catch (error) {
+            console.error("Error updating role:", error);
+            setAlertMessage("Failed to update role");
+            setAlertType("destructive");
           }
-      
-          setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-              user.uid === uid ? { ...user, role: newRole } : user
-            )
-          );
-      
-          console.log(`User ${uid} role updated to ${newRole}`);
-        } catch (error) {
-          console.error("Error updating role:", error);
-          alert("Failed to update role");
-        }
-      }}
-      
-      onView={(uid) => {
-        navigate(`/users/${uid}`);
-      }}
-      onDelete={(uid) => {
-        console.log("Delete user", uid);
-      }}
-    />
+        }}
+        onView={(uid) => navigate(`/users/${uid}`)}
+        onDelete={(uid) => console.log("Delete user", uid)}
+      />
+    </div>
   );
 }

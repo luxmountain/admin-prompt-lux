@@ -22,6 +22,7 @@ const TagPage = React.lazy(() => import('@/app/admin/tag'));
 const KeywordPage = React.lazy(() => import('@/app/admin/keyword'));
 const AccountPage = React.lazy(() => import('@/app/admin/account'));
 const AddTagPage = React.lazy(() => import('@/app/admin/add/tag'));
+const AddModelPage = React.lazy(() => import('@/app/admin/add/model'));
 const UserViewPage = React.lazy(() => import('@/app/view/user'));
 const PinViewPage = React.lazy(() => import('@/app/view/pin'));
 
@@ -59,7 +60,16 @@ const routes: IRoute[] = [
     protected: true,
     label: 'Model Management',
     icon: IconRobot,
-    children: [],
+    children: [
+      {
+        path: 'create',
+        element: AddModelPage,
+        protected: true,
+        label: 'Create Model',
+        icon: IconFlag,
+        children: [],
+      },
+    ],
     sidebarOrder: 4,
   },
   {
@@ -68,8 +78,17 @@ const routes: IRoute[] = [
     protected: true,
     label: 'Tag Management',
     icon: IconTags,
-    children: [],
     sidebarOrder: 5,
+    children: [
+      {
+        path: 'create',
+        element: AddTagPage,
+        protected: true,
+        label: 'Create Tag',
+        icon: IconFlag,
+        children: [],
+      },
+    ],
   },
   {
     path: '/keywords',
@@ -94,14 +113,6 @@ const routes: IRoute[] = [
     element: AccountPage,
     protected: true,
     label: 'My Account',
-    icon: IconFlag,
-    children: [],
-  },
-  {
-    path: '/tags/create',
-    element: AddTagPage,
-    protected: true,
-    label: 'Create Tag',
     icon: IconFlag,
     children: [],
   },
