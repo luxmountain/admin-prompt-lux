@@ -95,7 +95,7 @@ export function DataTable({ data, onView, onEdit }: DataTableProps) {
           className="flex items-center gap-1"
         >
           <PlusIcon className="h-4 w-4" />
-          Add Tag
+          Add Model
         </Button>
       </div>
 

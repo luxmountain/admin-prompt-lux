@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function CreateModelPage() {
   const [modelName, setModelName] = useState("");
+  const [modelLink, setModelLink] = useState("");
   const [modelDescription, setModelDescription] = useState("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"default" | "destructive">("default");
@@ -28,6 +29,7 @@ export default function CreateModelPage() {
         body: JSON.stringify({
           model_name: modelName,
           model_description: modelDescription,
+          model_link: modelLink,
         }),
       });
 
@@ -99,6 +101,17 @@ export default function CreateModelPage() {
               />
             </div>
 
+            <div className="grid gap-4 mt-8">
+              <Label className="text-lg">Model Link</Label>
+              <Input
+                type="text"
+                value={modelLink}
+                onChange={(e) => setModelLink(e.target.value)}
+                placeholder="Enter model name"
+                required
+                className="w-full h-12"
+              />
+            </div>
             {/* Submit Button */}
             <div className="flex justify-end mt-4">
               <Button type="submit" className="w-full sm:w-auto">
