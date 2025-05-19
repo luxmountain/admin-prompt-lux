@@ -4,6 +4,7 @@ import { AdminUser } from "@/types/AdminUser";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
+import AlertMessage from "../components/Alert";
 
 export default function Content() {
   const [users, setUsers] = useState<AdminUser[]>([]);
@@ -52,15 +53,7 @@ export default function Content() {
   return (
     <div className="space-y-4">
       {/* Alert Message */}
-      {alertMessage && (
-        <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>
-            {alertType === "destructive" ? "Error" : "Success"}
-          </AlertTitle>
-          <AlertDescription>{alertMessage}</AlertDescription>
-        </Alert>
-      )}
+      {alertMessage && <AlertMessage type={alertType} content={alertMessage} />}
 
       <DataTable
         data={users}

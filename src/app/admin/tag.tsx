@@ -1,23 +1,26 @@
 import { useState, useEffect } from "react";
-import { DataTable } from "@/app/components/data-table/tag";  // Adjusted path for tags table
+import { DataTable } from "@/app/components/data-table/tag"; // Adjusted path for tags table
 import { Tag } from "@/types/Tag"; // Create or update the `Tag` type for tags
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import Alert components
 import { useNavigate } from "react-router-dom";
-import { Terminal } from "lucide-react";
+import AlertMessage from "../components/Alert";
 
 export default function Content() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [alertType, setAlertType] = useState<"default" | "destructive">("default");
+  const [alertType, setAlertType] = useState<"default" | "destructive">(
+    "default"
+  );
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     // Fetch data from the API for tags
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/auth/admin/getDataTable/tags");
+        const response = await fetch(
+          "http://localhost:3000/api/auth/admin/getDataTable/tags"
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -63,16 +66,19 @@ export default function Content() {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/tags/${id}`, {
-        method: "DELETE",
-      });
-  
+      const response = await fetch(
+        `http://localhost:3000/api/auth/admin/getDataTable/tags/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Failed to delete tag");
       }
-  
+
       setTags((prevTags) => prevTags.filter((tag) => tag.tid !== id));
-  
+
       setAlertMessage("Tag deleted successfully!");
       setAlertType("default");
     } catch (error) {
@@ -92,14 +98,7 @@ export default function Content() {
 
   return (
     <div className="space-y-4">
-      {/* Show alert message if exists */}
-      {alertMessage && (
-        <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>{alertType === "destructive" ? "Error" : "Success"}</AlertTitle>
-          <AlertDescription>{alertMessage}</AlertDescription>
-        </Alert>
-      )}
+      {alertMessage && <AlertMessage type={alertType} content={alertMessage} />}
 
       <DataTable
         data={tags} // Pass tags data

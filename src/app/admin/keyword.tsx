@@ -3,13 +3,16 @@ import { DataTable } from "@/app/components/data-table/keyword";
 import { Keyword } from "@/types/Keyword";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import your Alert components
 import { Terminal } from "lucide-react";
+import AlertMessage from "../components/Alert";
 
 export default function Content() {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [alertType, setAlertType] = useState<"default" | "destructive">("default");
+  const [alertType, setAlertType] = useState<"default" | "destructive">(
+    "default"
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,18 +72,7 @@ export default function Content() {
 
   return (
     <div className="space-y-4">
-      {alertMessage && (
-        <Alert
-          variant={alertType}
-          className="fixed bottom-4 right-8 z-50 w-80"
-        >
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>
-            {alertType === "destructive" ? "Error" : "Success"}
-          </AlertTitle>
-          <AlertDescription>{alertMessage}</AlertDescription>
-        </Alert>
-      )}
+      {alertMessage && <AlertMessage type={alertType} content={alertMessage} />}
 
       <DataTable
         data={keywords}

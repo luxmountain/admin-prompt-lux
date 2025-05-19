@@ -2,22 +2,25 @@ import { useState, useEffect } from "react";
 import { PinTable } from "@/app/components/data-table/content";
 import { Pin } from "@/types/Pin";
 import { useNavigate } from "react-router-dom";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import AlertMessage from "../components/Alert";
 
 export default function Content() {
   const [pins, setPins] = useState<Pin[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [alertType, setAlertType] = useState<"default" | "destructive">("default");
+  const [alertType, setAlertType] = useState<"default" | "destructive">(
+    "default"
+  );
 
   const navigate = useNavigate();
 
   const fetchPins = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/auth/admin/getDataTable/pins");
+      const response = await fetch(
+        "http://localhost:3000/api/auth/admin/getDataTable/pins"
+      );
       if (!response.ok) throw new Error("Failed to fetch pins");
       const data = await response.json();
       setPins(data);
@@ -46,9 +49,12 @@ export default function Content() {
   // Hàm xóa pin theo id
   const deletePin = async (pid: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/auth/admin/getDataTable/pins/${pid}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/auth/admin/getDataTable/pins/${pid}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (!response.ok) {
         const errData = await response.json();
         throw new Error(errData.error || "Failed to delete pin");
@@ -70,13 +76,7 @@ export default function Content() {
   return (
     <div className="space-y-4">
       {/* Alert Message */}
-      {alertMessage && (
-        <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
-          <Terminal className="h-4 w-4" />
-          <AlertTitle>{alertType === "destructive" ? "Error" : "Success"}</AlertTitle>
-          <AlertDescription>{alertMessage}</AlertDescription>
-        </Alert>
-      )}
+      {alertMessage && <AlertMessage type={alertType} content={alertMessage} />}
 
       <PinTable
         data={pins}
