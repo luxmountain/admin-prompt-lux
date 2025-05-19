@@ -7,13 +7,6 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import PaginationControl from "@/app/components/PaginationControl";
 

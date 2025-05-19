@@ -94,7 +94,6 @@ export default function CreateTagPage() {
                 value={tagDescription}
                 onChange={(e) => setTagDescription(e.target.value)}
                 placeholder="Enter a description for the tag"
-                required
                 className="w-full h-48"
               />
             </div>

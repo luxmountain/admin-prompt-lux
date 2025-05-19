@@ -117,6 +117,7 @@ export default function Content() {
             setKeywords((prev) => [...prev, data.data]);
             setAlertType("default");
             setAlertMessage("Keyword added successfully!");
+            window.location.reload();
           } catch (error) {
             console.error("Error saving keyword:", error);
             setAlertType("destructive");
