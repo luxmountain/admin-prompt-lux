@@ -15,7 +15,7 @@ import PaginationControl from "@/app/components/PaginationControl";
 
 interface ReportTableProps {
   data: Report[];
-  onView?: (id: number) => void;
+  onView?: (report: Report) => void;
   onDelete?: (id: number) => void;
 }
 
@@ -231,7 +231,7 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => onView?.(report.id)}
+                      onClick={() => onView?.(report)}
                     >
                       View
                     </Button>

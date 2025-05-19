@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Report } from "@/types/Report";
 import { ReportTable } from "@/app/components/data-table/report";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Alert components
+import { useNavigate } from "react-router-dom";
 
 export default function ReportContent() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -11,6 +12,7 @@ export default function ReportContent() {
   const [alertType, setAlertType] = useState<"default" | "destructive">(
     "default"
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -28,6 +30,14 @@ export default function ReportContent() {
     };
     fetchReports();
   }, []);
+
+  const handleView = (report: Report) => {
+    if (report.Post?.pid) {
+      navigate(`/pins/${report.Post.pid}`);
+    } else {
+      navigate(`/users/${report.User_Report_reported_user_idToUser.uid}`);
+    }
+  };
 
   const handleDelete = async (id: number) => {
     try {
@@ -76,11 +86,7 @@ export default function ReportContent() {
         </Alert>
       )}
 
-      <ReportTable
-        data={reports}
-        onView={(id) => console.log("View report", id)}
-        onDelete={handleDelete}
-      />
+      <ReportTable data={reports} onView={handleView} onDelete={handleDelete} />
     </>
   );
 }
