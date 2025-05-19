@@ -3,6 +3,7 @@ import { DataTable } from "@/app/components/data-table/tag";  // Adjusted path f
 import { Tag } from "@/types/Tag"; // Create or update the `Tag` type for tags
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import Alert components
 import { useNavigate } from "react-router-dom";
+import { Terminal } from "lucide-react";
 
 export default function Content() {
   const [tags, setTags] = useState<Tag[]>([]);
@@ -94,6 +95,7 @@ export default function Content() {
       {/* Show alert message if exists */}
       {alertMessage && (
         <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
+          <Terminal className="h-4 w-4" />
           <AlertTitle>{alertType === "destructive" ? "Error" : "Success"}</AlertTitle>
           <AlertDescription>{alertMessage}</AlertDescription>
         </Alert>

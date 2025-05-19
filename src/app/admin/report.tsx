@@ -3,6 +3,7 @@ import { Report } from "@/types/Report";
 import { ReportTable } from "@/app/components/data-table/report";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Alert components
 import { useNavigate } from "react-router-dom";
+import { Terminal } from "lucide-react";
 
 export default function ReportContent() {
   const [reports, setReports] = useState<Report[]>([]);
@@ -79,6 +80,7 @@ export default function ReportContent() {
     <>
       {alertMessage && (
         <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
+          <Terminal className="h-4 w-4" />
           <AlertTitle>
             {alertType === "destructive" ? "Error" : "Success"}
           </AlertTitle>

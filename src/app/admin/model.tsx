@@ -3,6 +3,7 @@ import { DataTable } from "@/app/components/data-table/model";
 import { Model } from "@/types/Model";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Alert components
 import { useNavigate } from "react-router-dom";
+import { Terminal } from "lucide-react";
 
 export default function Content() {
   const [models, setModels] = useState<Model[]>([]);
@@ -63,6 +64,7 @@ export default function Content() {
     <div className="space-y-4">
       {alertMessage && (
         <Alert variant={alertType} className="fixed bottom-8 right-8 z-50 w-80">
+          <Terminal className="h-4 w-4" />
           <AlertTitle>{alertType === "destructive" ? "Error" : "Success"}</AlertTitle>
           <AlertDescription>{alertMessage}</AlertDescription>
         </Alert>

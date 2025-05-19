@@ -128,7 +128,6 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useAdminUser();
-  console.log("user", user);
   const navMain = useMemo(() => {
     return routes
       .filter(

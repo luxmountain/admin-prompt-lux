@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { DataTable } from "@/app/components/data-table/keyword";
 import { Keyword } from "@/types/Keyword";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // <-- Import your Alert components
+import { Terminal } from "lucide-react";
 
 export default function Content() {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
@@ -73,6 +74,7 @@ export default function Content() {
           variant={alertType}
           className="fixed bottom-4 right-8 z-50 w-80"
         >
+          <Terminal className="h-4 w-4" />
           <AlertTitle>
             {alertType === "destructive" ? "Error" : "Success"}
           </AlertTitle>
