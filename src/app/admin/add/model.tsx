@@ -96,7 +96,6 @@ export default function CreateModelPage() {
                 value={modelDescription}
                 onChange={(e) => setModelDescription(e.target.value)}
                 placeholder="Enter a description for the model"
-                required
                 className="w-full h-48"
               />
             </div>
@@ -107,8 +106,7 @@ export default function CreateModelPage() {
                 type="text"
                 value={modelLink}
                 onChange={(e) => setModelLink(e.target.value)}
-                placeholder="Enter model name"
-                required
+                placeholder="Enter model link"
                 className="w-full h-12"
               />
             </div>
