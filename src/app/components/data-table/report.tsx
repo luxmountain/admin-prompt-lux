@@ -11,6 +11,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { DateRangeFilter } from "../DataRangeFilter";
+import PaginationControl from "@/app/components/PaginationControl";
 
 interface ReportTableProps {
   data: Report[];
@@ -249,41 +250,13 @@ export function ReportTable({ data, onView, onDelete }: ReportTableProps) {
         </table>
       </div>
 
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <span>Rows per page:</span>
-          <Select
-            defaultValue={rowsPerPage.toString()}
-            onValueChange={(value) => {
-              setRowsPerPage(Number(value));
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-[80px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
-            Previous
-          </Button>
-          <Button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <PaginationControl
+        page={page}
+        setPage={setPage}
+        rowsPerPage={rowsPerPage}
+        setRowsPerPage={setRowsPerPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

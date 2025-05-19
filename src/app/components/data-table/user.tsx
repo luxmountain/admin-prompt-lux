@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid"; // import icons
 import { DateRangeFilter } from "@/app/components/DataRangeFilter";
+import PaginationControl from "@/app/components/PaginationControl";
 
 interface DataTableProps {
   data: AdminUser[];
@@ -43,7 +44,7 @@ export function DataTable({
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>(new Date());
-  
+
   const filteredData = useMemo(() => {
     return data.filter((user) => {
       const searchLower = search.toLowerCase();
@@ -51,23 +52,27 @@ export function DataTable({
         user.username?.toLowerCase().includes(searchLower) ||
         user.email?.toLowerCase().includes(searchLower) ||
         user.uid.toString().includes(search);
-  
+
       const matchesRole =
         roleFilter === "all" ||
         (roleFilter === "user" && user.role === 0) ||
         (roleFilter === "admin" && user.role === 1);
-  
+
       const userDate = new Date(user.created_at);
-      const startDate = fromDate ? new Date(fromDate.setHours(0, 0, 0, 0)) : undefined;
-      const endDate = toDate ? new Date(toDate.setHours(23, 59, 59, 999)) : undefined;
+      const startDate = fromDate
+        ? new Date(fromDate.setHours(0, 0, 0, 0))
+        : undefined;
+      const endDate = toDate
+        ? new Date(toDate.setHours(23, 59, 59, 999))
+        : undefined;
       const matchesDate =
         (!startDate || userDate >= startDate) &&
         (!endDate || userDate <= endDate);
-  
+
       return matchesSearch && matchesRole && matchesDate;
     });
   }, [search, roleFilter, data, fromDate, toDate]);
-  
+
   const sortedData = useMemo(() => {
     return [...filteredData].sort((a, b) => {
       if (a[sortBy] < b[sortBy]) return sortAsc ? -1 : 1;
@@ -134,11 +139,11 @@ export function DataTable({
           </Select>
         </div>
         <DateRangeFilter
-        fromDate={fromDate}
-        toDate={toDate}
-        onFromDateChange={setFromDate}
-        onToDateChange={setToDate}
-      />
+          fromDate={fromDate}
+          toDate={toDate}
+          onFromDateChange={setFromDate}
+          onToDateChange={setToDate}
+        />
       </div>
 
       <div className="overflow-hidden rounded-lg shadow-md border">
@@ -223,41 +228,13 @@ export function DataTable({
       </div>
 
       {/* Pagination + Rows per page controls */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <span>Rows per page:</span>
-          <Select
-            defaultValue={rowsPerPage.toString()}
-            onValueChange={(value) => {
-              setRowsPerPage(Number(value));
-              setPage(1); // reset to first page when page size changes
-            }}
-          >
-            <SelectTrigger className="w-[80px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-            Previous
-          </Button>
-          <Button
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <PaginationControl
+        page={page}
+        setPage={setPage}
+        rowsPerPage={rowsPerPage}
+        setRowsPerPage={setRowsPerPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

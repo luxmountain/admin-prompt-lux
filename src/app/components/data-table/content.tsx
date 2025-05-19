@@ -3,14 +3,8 @@ import { Pin } from "@/types/Pin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowUpIcon, ArrowDownIcon } from "@heroicons/react/24/solid";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { DateRangeFilter } from "@/app/components/DataRangeFilter";
+import PaginationControl from "@/app/components/PaginationControl";
 
 interface PinTableProps {
   data: Pin[];
@@ -35,7 +29,7 @@ export function PinTable({ data, onView, onDelete }: PinTableProps) {
   const [sortBy, setSortBy] = useState<keyof Pin>("pid");
   const [sortAsc, setSortAsc] = useState(false);
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>(new Date());
 
@@ -214,42 +208,13 @@ export function PinTable({ data, onView, onDelete }: PinTableProps) {
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <span>Rows per page:</span>
-          <Select
-            value={rowsPerPage.toString()}
-            onValueChange={(value) => {
-              setRowsPerPage(Number(value));
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-[80px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-            Previous
-          </Button>
-          <Button
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <PaginationControl
+        page={page}
+        setPage={setPage}
+        rowsPerPage={rowsPerPage}
+        setRowsPerPage={setRowsPerPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

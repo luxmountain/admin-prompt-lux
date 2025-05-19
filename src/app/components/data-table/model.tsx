@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ArrowUpIcon, ArrowDownIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
+import PaginationControl from "@/app/components/PaginationControl";
 
 interface DataTableProps {
   data: Model[];
@@ -152,41 +153,13 @@ export function DataTable({ data, onView, onEdit }: DataTableProps) {
       </div>
 
       {/* Pagination + Rows per page controls */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <span>Rows per page:</span>
-          <Select
-            defaultValue={rowsPerPage.toString()}
-            onValueChange={(value) => {
-              setRowsPerPage(Number(value));
-              setPage(1); // reset to first page when page size changes
-            }}
-          >
-            <SelectTrigger className="w-[80px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="20">20</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center gap-4">
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <Button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-            Previous
-          </Button>
-          <Button
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <PaginationControl
+        page={page}
+        setPage={setPage}
+        rowsPerPage={rowsPerPage}
+        setRowsPerPage={setRowsPerPage}
+        totalPages={totalPages}
+      />
     </div>
   );
 }
