@@ -8,19 +8,17 @@ import {
 import routes from "./router"; // Import route configuration
 import ProtectedRoute from "./ProtectedRoute"; // ProtectedRoute component
 import Layout from "@/app/layout";
+import { IRoute } from "./types/IRoute";
 
 const renderRoutes = (
-  routes: any[],
+  routes: IRoute[],
   parentPath: string = ""
 ): React.ReactNode[] => {
   return routes.flatMap(
-    ({
-      path,
-      element: Element,
-      protected: isProtected,
-      children,
-    }) => {
+    ({ path, element: Element, protected: isProtected, children }) => {
       const fullPath = `${parentPath}/${path}`.replace(/\/+/g, "/"); // Resolve full path
+      
+      if (!Element) return [];
 
       const RouteElement = isProtected ? (
         <ProtectedRoute>
