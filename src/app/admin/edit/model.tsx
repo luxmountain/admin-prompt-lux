@@ -11,6 +11,7 @@ export default function EditModelPage() {
   const { id } = useParams();  // Get the id from the URL
   const [modelName, setModelName] = useState("");
   const [modelDescription, setModelDescription] = useState("");
+  const [modelLink, setModelLink] = useState("");
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"default" | "destructive">("default");
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function EditModelPage() {
         const model = await response.json();
         setModelName(model.model_name);
         setModelDescription(model.model_description || "");
+        setModelLink(model.model_link || "");
       } catch (error) {
         setAlertMessage((error as Error).message || "Failed to fetch model data.");
         setAlertType("destructive");
@@ -52,6 +54,7 @@ export default function EditModelPage() {
           id: parseInt(id),
           model_name: modelName,
           model_description: modelDescription,
+          model_link: modelLink,
         }),
       });
 
@@ -117,7 +120,7 @@ export default function EditModelPage() {
             </div>
 
             {/* Model Description */}
-            <div className="grid gap-4">
+            <div className="grid gap-4 mb-8">
               <Label className="text-lg">Model Description</Label>
               <Textarea
                 value={modelDescription}
@@ -125,6 +128,19 @@ export default function EditModelPage() {
                 placeholder="Enter a description for the model"
                 required
                 className="w-full h-48"
+              />
+            </div>
+
+            {/* Model Link */}
+            <div className="grid gap-4">
+              <Label className="text-lg">Model Link</Label>
+              <Input
+                type="text"
+                value={modelLink}
+                onChange={(e) => setModelLink(e.target.value)}
+                placeholder="Enter a link for the model"
+                required
+                className="w-full h-12"
               />
             </div>
 

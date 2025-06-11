@@ -2,7 +2,11 @@ import { useState, useMemo, useEffect } from "react";
 import { Model } from "@/types/Model"; // Updated import
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowUpIcon, ArrowDownIcon, PlusIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowUpIcon,
+  ArrowDownIcon,
+  PlusIcon,
+} from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import PaginationControl from "@/app/components/PaginationControl";
 
@@ -17,6 +21,7 @@ const columns: { key: keyof Model; label: string }[] = [
   { key: "mid", label: "Model ID" },
   { key: "model_name", label: "Model Name" },
   { key: "model_description", label: "Description" },
+  { key: "model_link", label: "Link" },
   { key: "postCount", label: "Post Count" },
 ];
 
@@ -125,7 +130,18 @@ export function DataTable({ data, onView, onEdit }: DataTableProps) {
               <tr key={model.mid} className="hover:bg-gray-50">
                 {columns.map((column) => (
                   <td key={column.key} className="px-4 py-2 border">
-                    {model[column.key]}
+                    {column.key === "model_link" ? (
+                      <a
+                        href={model[column.key] as string}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline hover:text-blue-800"
+                      >
+                        {model[column.key]}
+                      </a>
+                    ) : (
+                      model[column.key]
+                    )}
                   </td>
                 ))}
                 <td className="px-4 py-2 border">
