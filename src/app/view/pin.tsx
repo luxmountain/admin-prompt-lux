@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, User, Image as ImageIcon, Heart, Tag } from "lucide-react";
 
@@ -43,7 +38,9 @@ const UserViewPage = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/auth/admin/actions/view/${id}/pin`);
+        const res = await fetch(
+          `http://localhost:3000/api/auth/admin/actions/view/${id}/pin`
+        );
         const json = await res.json();
         setPost(json.data);
       } catch (error) {
@@ -69,7 +66,7 @@ const UserViewPage = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-4">
+    <div className="mx-auto px-6 space-y-6">
       {/* Post Card */}
       <Card>
         <CardHeader>
@@ -79,11 +76,13 @@ const UserViewPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <img
-            src={post.image_url}
-            alt={post.title}
-            className="w-full rounded-lg"
-          />
+          <div className="grid justify-center">
+            <img
+              src={post.image_url}
+              alt={post.title}
+              className="w-[400px] rounded-lg"
+            />
+          </div>
           <p className="text-sm text-muted-foreground">
             Prompt: {post.prompt_used}
           </p>
@@ -109,11 +108,15 @@ const UserViewPage = () => {
           </Avatar>
           <div>
             <p className="font-medium">
-              {post.user.first_name} {post.user.last_name} (@{post.user.username})
+              {post.user.first_name} {post.user.last_name} (@
+              {post.user.username})
             </p>
-            <p className="text-sm text-muted-foreground">UID: {post.user.uid}</p>
             <p className="text-sm text-muted-foreground">
-              Followers: {post.user.followers_count} | Following: {post.user.following_count}
+              UID: {post.user.uid}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Followers: {post.user.followers_count} | Following:{" "}
+              {post.user.following_count}
             </p>
           </div>
         </CardContent>

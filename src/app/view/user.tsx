@@ -84,7 +84,7 @@ const UserViewPage = () => {
   if (!user) return null;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="px-6 space-y-6">
       {/* User Info */}
       <Card>
         <CardHeader>
@@ -116,15 +116,26 @@ const UserViewPage = () => {
                 Joined: {new Date(user.created_at).toLocaleDateString()}
               </Badge>
               <div className="flex gap-4 mt-4">
-                {/* Reported User Count */}
                 <div className="flex items-center gap-2">
                   <ExclamationCircleIcon className="w-5 h-5 text-red-500" />
-                  <span>{user.reported_user_count} Reports</span>
+                  <span>
+                    {user.reported_user_count === 0
+                      ? "No Reports"
+                      : user.reported_user_count === 1
+                      ? "1 Report"
+                      : `${user.reported_user_count} Reports`}
+                  </span>
                 </div>
-                {/* Reported Posts Count */}
+
                 <div className="flex items-center gap-2">
                   <DocumentTextIcon className="w-5 h-5 text-red-500" />
-                  <span>{user.reported_posts_count} Post Reports</span>
+                  <span>
+                    {user.reported_posts_count === 0
+                      ? "No Post Reports"
+                      : user.reported_posts_count === 1
+                      ? "1 Post Report"
+                      : `${user.reported_posts_count} Post Reports`}
+                  </span>
                 </div>
               </div>
             </div>
@@ -182,7 +193,7 @@ const UserViewPage = () => {
                       </span>
                       <span className="flex items-center gap-2">
                         <ExclamationCircleIcon className="w-5 h-5 text-red-500" />
-                        {post.report_count} Reports
+                        {post.report_count}
                       </span>
                     </div>
                   </div>
