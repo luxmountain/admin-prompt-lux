@@ -99,8 +99,8 @@ export function SectionCards() {
           </div>
           <div className="text-muted-foreground">
             {isPinUp
-              ? "More pins created this month."
-              : "Fewer pins created than last month."}
+              ? "More pins created in the last 30 days than the previous 30."
+              : "Fewer pins created compared to the previous 30 days."}
           </div>
         </CardFooter>
       </Card>
@@ -131,8 +131,8 @@ export function SectionCards() {
           </div>
           <div className="text-muted-foreground">
             {isUp
-              ? "Steady increase in user acquisition this month."
-              : "User acquisition slowed down compared to last month."}
+              ? "More users joined compared to the previous 30 days."
+              : "Fewer users joined compared to the previous 30 days."}
           </div>
         </CardFooter>
       </Card>
@@ -168,8 +168,8 @@ export function SectionCards() {
           </div>
           <div className="text-muted-foreground">
             {isActiveUp
-              ? "More active users this month."
-              : "Fewer active users than last month."}
+              ? "More active users in the past 30 days compared to the previous 30 days."
+              : "Fewer active users in the past 30 days compared to the previous 30 days."}
           </div>
         </CardFooter>
       </Card>
